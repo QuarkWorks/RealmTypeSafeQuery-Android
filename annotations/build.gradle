@@ -1,4 +1,7 @@
 apply plugin: 'java'
+apply plugin: 'com.github.dcendents.android-maven' // jitpack.io
+
+group='com.github.quarkworks' // jitpack.io
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
