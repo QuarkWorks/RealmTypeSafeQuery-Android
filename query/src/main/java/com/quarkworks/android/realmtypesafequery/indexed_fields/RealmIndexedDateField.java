@@ -1,8 +1,8 @@
-package com.quarkworks.android.realmtypesafequery.indexed;
+package com.quarkworks.android.realmtypesafequery.indexed_fields;
 
 import android.support.annotation.NonNull;
 
-import com.quarkworks.android.realmtypesafequery.attributes.RealmDateField;
+import com.quarkworks.android.realmtypesafequery.fields.RealmDateField;
 import com.quarkworks.android.realmtypesafequery.converter.RealmFieldConverter;
 
 import java.util.Date;

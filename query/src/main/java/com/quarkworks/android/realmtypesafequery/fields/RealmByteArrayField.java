@@ -1,4 +1,4 @@
-package com.quarkworks.android.realmtypesafequery.attributes;
+package com.quarkworks.android.realmtypesafequery.fields;
 
 import android.support.annotation.NonNull;
 

@@ -16,4 +16,6 @@ public class TestRecord implements RealmModel {
 
     @Ignore
     public Object ingnoredField;
+
+    public String hostValue;
 }

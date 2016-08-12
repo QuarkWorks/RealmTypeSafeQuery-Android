@@ -1,9 +1,9 @@
-package com.quarkworks.android.realmtypesafequery.primary;
+package com.quarkworks.android.realmtypesafequery.primary_fields;
 
 import android.support.annotation.NonNull;
 
 import com.quarkworks.android.realmtypesafequery.converter.RealmFieldConverter;
-import com.quarkworks.android.realmtypesafequery.indexed.RealmIndexedStringField;
+import com.quarkworks.android.realmtypesafequery.indexed_fields.RealmIndexedStringField;
 
 import io.realm.RealmModel;
 

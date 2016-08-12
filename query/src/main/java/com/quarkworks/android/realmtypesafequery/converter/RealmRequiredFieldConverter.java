@@ -5,9 +5,9 @@ import android.support.annotation.NonNull;
 public interface RealmRequiredFieldConverter<RealmValue, Value> extends RealmFieldConverter<RealmValue, Value> {
     @Override
     @NonNull
-    RealmValue convertToValue(@NonNull Value attribute);
+    Value convertToValue(@NonNull RealmValue realmValue);
 
     @Override
     @NonNull
-    Value convertToRealmValue(@NonNull RealmValue value);
+    RealmValue convertToRealmValue(@NonNull Value value);
 }

@@ -5,9 +5,9 @@ import android.support.annotation.Nullable;
 public interface RealmOptionalFieldConverter<RealmValue, Value> extends RealmFieldConverter<RealmValue, Value> {
     @Override
     @Nullable
-    RealmValue convertToValue(@Nullable Value attribute);
+    Value convertToValue(@Nullable RealmValue realmValue);
 
     @Override
     @Nullable
-    Value convertToRealmValue(@Nullable RealmValue value);
+    RealmValue convertToRealmValue(@Nullable Value value);
 }
