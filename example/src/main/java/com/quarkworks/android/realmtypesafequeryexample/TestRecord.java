@@ -1,6 +1,7 @@
 package com.quarkworks.android.realmtypesafequeryexample;
 
-import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmStringFields;
+
+import com.quarkworks.android.realmtypesafequeryexample.annotations.GenerateRealmStringFields;
 
 import java.util.Date;
 

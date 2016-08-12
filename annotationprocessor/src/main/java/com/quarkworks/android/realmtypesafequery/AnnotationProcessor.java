@@ -1,7 +1,7 @@
 package com.quarkworks.android.realmtypesafequery;
 
-import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmStringFields;
-import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFields;
+import com.quarkworks.android.realmtypesafequeryexample.annotations.GenerateRealmFields;
+import com.quarkworks.android.realmtypesafequeryexample.annotations.GenerateRealmStringFields;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;

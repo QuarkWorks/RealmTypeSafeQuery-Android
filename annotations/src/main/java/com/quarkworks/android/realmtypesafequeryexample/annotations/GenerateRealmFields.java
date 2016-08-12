@@ -1,4 +1,4 @@
-package com.quarkworks.android.realmtypesafequery.annotations;
+package com.quarkworks.android.realmtypesafequeryexample.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
