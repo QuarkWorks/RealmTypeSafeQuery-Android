@@ -1,7 +1,8 @@
 package com.quarkworks.android.realmtypesafequery;
 
-import com.quarkworks.android.realmtypesafequeryexample.annotations.GenerateRealmFields;
-import com.quarkworks.android.realmtypesafequeryexample.annotations.GenerateRealmStringFields;
+import com.google.auto.service.AutoService;
+import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFields;
+import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFieldNames;
 import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
@@ -27,14 +29,14 @@ import javax.tools.Diagnostic;
 
 import io.realm.annotations.Ignore;
 
-//@AutoService(Processor.class) this causes some compiler error so we are now doing this by hand
+@AutoService(Processor.class)
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class AnnotationProcessor extends AbstractProcessor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> set = new LinkedHashSet<>();
-        set.add(GenerateRealmStringFields.class.getCanonicalName());
+        set.add(GenerateRealmFieldNames.class.getCanonicalName());
         set.add(GenerateRealmFields.class.getCanonicalName());
 
         return set;
@@ -42,7 +44,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 
     @Override
     public synchronized boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        for (Element element : roundEnv.getElementsAnnotatedWith(GenerateRealmStringFields.class)) {
+        for (Element element : roundEnv.getElementsAnnotatedWith(GenerateRealmFieldNames.class)) {
             if (!(element instanceof TypeElement)) continue;
 
             TypeElement typeElement = (TypeElement) element;
@@ -55,10 +57,8 @@ public class AnnotationProcessor extends AbstractProcessor {
                 if (isIgnored) continue;
 
                 Type type = String.class;
-
-
-                String name = variableElement.getSimpleName().toString();
-                name = name.replaceAll("([A-Z])", "_$1").toUpperCase();
+                String name = variableElement.getSimpleName().toString()
+                        .replaceAll("([A-Z])", "_$1").toUpperCase();
                 Modifier[] modifiers = {Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL};
                 CodeBlock codeBlock = CodeBlock.of("$S", variableElement.getSimpleName());
 
@@ -69,8 +69,8 @@ public class AnnotationProcessor extends AbstractProcessor {
                 fieldSpecs.add(fieldSpec);
             }
 
-            String packageName = "com.quarkworks.android.realmtypesafequery.generated";
-            String className = typeElement.getSimpleName() + "StringFields";
+            String packageName = this.getClass().getPackage().getName() + ".generated";
+            String className = typeElement.getSimpleName() + "FieldNames";
 
             TypeSpec typeSpec = TypeSpec.classBuilder(className)
                     .addFields(fieldSpecs)

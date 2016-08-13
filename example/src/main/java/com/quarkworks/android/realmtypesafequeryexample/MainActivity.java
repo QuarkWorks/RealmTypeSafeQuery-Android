@@ -3,7 +3,7 @@ package com.quarkworks.android.realmtypesafequeryexample;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.quarkworks.android.realmtypesafequery.generated.TestRecordStringFields;
+import com.quarkworks.android.realmtypesafequery.generated.TestRecordFieldNames;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -12,7 +12,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Object f1 = TestRecordStringFields.DATE_FIELD;
-        Object f2 = TestRecordStringFields.STRING_FIELD;
+        Object f1 = TestRecordFieldNames.DATE_FIELD;
+        Object f2 = TestRecordFieldNames.STRING_FIELD;
     }
 }

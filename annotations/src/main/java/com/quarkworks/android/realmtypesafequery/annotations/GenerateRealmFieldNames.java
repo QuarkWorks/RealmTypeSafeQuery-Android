@@ -1,4 +1,4 @@
-package com.quarkworks.android.realmtypesafequeryexample.annotations;
+package com.quarkworks.android.realmtypesafequery.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,4 +7,4 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.SOURCE)
-public @interface GenerateRealmFields {}
+public @interface GenerateRealmFieldNames {}

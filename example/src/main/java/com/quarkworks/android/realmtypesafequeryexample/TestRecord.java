@@ -1,7 +1,7 @@
 package com.quarkworks.android.realmtypesafequeryexample;
 
 
-import com.quarkworks.android.realmtypesafequeryexample.annotations.GenerateRealmStringFields;
+import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFieldNames;
 
 import java.util.Date;
 
@@ -10,7 +10,7 @@ import io.realm.annotations.Ignore;
 import io.realm.annotations.RealmClass;
 
 @RealmClass
-@GenerateRealmStringFields
+@GenerateRealmFieldNames
 public class TestRecord implements RealmModel {
     public String stringField;
     public Date dateField;

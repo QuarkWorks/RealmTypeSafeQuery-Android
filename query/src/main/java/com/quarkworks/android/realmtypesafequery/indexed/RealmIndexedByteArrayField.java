@@ -1,4 +1,4 @@
-package com.quarkworks.android.realmtypesafequery.indexed_fields;
+package com.quarkworks.android.realmtypesafequery.indexed;
 
 import android.support.annotation.NonNull;
 
