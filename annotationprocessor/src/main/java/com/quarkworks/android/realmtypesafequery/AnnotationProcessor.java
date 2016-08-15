@@ -42,7 +42,7 @@ public class AnnotationProcessor extends AbstractProcessor {
         return set;
     }
 
-    @Override
+    @Override //synchronized not needed
     public synchronized boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (Element element : roundEnv.getElementsAnnotatedWith(GenerateRealmFieldNames.class)) {
             if (!(element instanceof TypeElement)) continue;
@@ -52,7 +52,7 @@ public class AnnotationProcessor extends AbstractProcessor {
             List<FieldSpec> fieldSpecs = new LinkedList<>();
 
             for (VariableElement variableElement : variableElements) {
-
+                if (variableElement.getModifiers().contains(Modifier.STATIC)) continue;
                 boolean isIgnored = variableElement.getAnnotation(Ignore.class) != null;
                 if (isIgnored) continue;
 
