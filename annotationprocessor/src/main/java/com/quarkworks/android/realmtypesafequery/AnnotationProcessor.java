@@ -58,7 +58,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 
                 Type type = String.class;
                 String name = variableElement.getSimpleName().toString()
-                        .replaceAll("([A-Z])", "_$1").toUpperCase();
+                        .replaceAll("([a-z])([A-Z])", "$1_$2").toUpperCase();
                 Modifier[] modifiers = {Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL};
                 CodeBlock codeBlock = CodeBlock.of("$S", variableElement.getSimpleName());
 
