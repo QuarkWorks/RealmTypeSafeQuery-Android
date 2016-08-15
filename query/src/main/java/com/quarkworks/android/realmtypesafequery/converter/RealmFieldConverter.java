@@ -1,6 +1,8 @@
 package com.quarkworks.android.realmtypesafequery.converter;
 
+import android.support.annotation.Nullable;
+
 public interface RealmFieldConverter<RealmValue, Value> {
-    Value convertToValue(RealmValue realmValue);
-    RealmValue convertToRealmValue(Value value);
+    Value convertToValue(@Nullable  RealmValue realmValue);
+    RealmValue convertToRealmValue(@Nullable Value value);
 }
