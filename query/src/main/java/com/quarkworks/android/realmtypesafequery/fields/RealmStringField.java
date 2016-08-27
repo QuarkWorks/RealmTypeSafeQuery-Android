@@ -1,41 +1,43 @@
 package com.quarkworks.android.realmtypesafequery.fields;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import com.quarkworks.android.realmtypesafequery.RealmField;
-import com.quarkworks.android.realmtypesafequery.RealmFieldType;
-import com.quarkworks.android.realmtypesafequery.converter.RealmFieldConverter;
+import com.quarkworks.android.realmtypesafequery.BaseRealmField;
+import com.quarkworks.android.realmtypesafequery.interfaces.RealmEmptyableField;
+import com.quarkworks.android.realmtypesafequery.interfaces.SortableRealmField;
 
 import io.realm.RealmModel;
+import io.realm.RealmQuery;
 
-public class RealmStringField<Model extends RealmModel, Value> extends RealmField<Model, String, Value> {
+public class RealmStringField<Model extends RealmModel> extends BaseRealmField<Model, String>
+        implements SortableRealmField<Model, String>, RealmEmptyableField<Model, String> {
 
-    @NonNull
-    public static <Model extends RealmModel> RealmStringField<Model, String> create(@NonNull Class<Model> modelType, @NonNull String name) {
-        return new RealmStringField<>(modelType, name, RealmStringFieldConverter.SHARED_INSTANCE);
+    public RealmStringField(@NonNull Class<Model> modelClass, @NonNull String keyPath) {
+        super(modelClass, keyPath);
     }
 
-    @NonNull
-    public static <Model extends RealmModel, Value> RealmStringField<Model, Value> create(@NonNull Class<Model> modelType, @NonNull String name, RealmFieldConverter<String, Value> converter) {
-        return new RealmStringField<>(modelType, name, converter);
-    }
-
-    public RealmStringField(@NonNull Class<Model> modelType, @NonNull String name, @NonNull RealmFieldConverter<String, Value> attributeConverter) {
-        super(modelType, name, attributeConverter, RealmFieldType.STRING);
-    }
-
-    public static class RealmStringFieldConverter implements RealmFieldConverter<String, String> {
-
-        public static final RealmStringFieldConverter SHARED_INSTANCE = new RealmStringFieldConverter();
-
-        @Override
-        public String convertToValue(String attribute) {
-            return attribute;
+    @Override
+    public void equalTo(@NonNull RealmQuery<Model> query, @Nullable String value) {
+        if (value == null) {
+            this.isNull(query);
+            return;
         }
 
-        @Override
-        public String convertToRealmValue(String value) {
-            return value;
+        query.equalTo(this.getKeyPath(), value);    }
+
+    @Override
+    public void notEqualTo(@NonNull RealmQuery<Model> query, @Nullable String value) {
+        if (value == null) {
+            this.isNotNull(query);
+            return;
         }
+
+        query.notEqualTo(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void never(@NonNull RealmQuery<Model> query) {
+        query.equalTo(this.getKeyPath(), "Q").equalTo(this.getKeyPath(), "W");
     }
 }

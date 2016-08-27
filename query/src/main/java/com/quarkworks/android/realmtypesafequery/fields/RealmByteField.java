@@ -1,42 +1,43 @@
 package com.quarkworks.android.realmtypesafequery.fields;
 
-
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import com.quarkworks.android.realmtypesafequery.RealmField;
-import com.quarkworks.android.realmtypesafequery.RealmFieldType;
-import com.quarkworks.android.realmtypesafequery.converter.RealmFieldConverter;
+import com.quarkworks.android.realmtypesafequery.BaseRealmField;
+import com.quarkworks.android.realmtypesafequery.interfaces.SortableRealmField;
 
 import io.realm.RealmModel;
+import io.realm.RealmQuery;
 
-public class RealmByteField<Model extends RealmModel, Value> extends RealmField<Model, Byte, Value> {
+public class RealmByteField<Model extends RealmModel> extends BaseRealmField<Model, Byte>
+        implements SortableRealmField<Model, Byte> {
 
-    @NonNull
-    public static <Model extends RealmModel> RealmByteField<Model, Byte> create(@NonNull Class<Model> modelType, @NonNull String name) {
-        return new RealmByteField<>(modelType, name, RealmByteFieldConverter.SHARED_INSTANCE);
+    public RealmByteField(@NonNull Class<Model> modelClass, @NonNull String keyPath) {
+        super(modelClass, keyPath);
     }
 
-    @NonNull
-    public static <Model extends RealmModel, Value> RealmByteField<Model, Value> create(@NonNull Class<Model> modelType, @NonNull String name, RealmFieldConverter<Byte, Value> converter) {
-        return new RealmByteField<>(modelType, name, converter);
-    }
-
-    public RealmByteField(@NonNull Class<Model> modelType, @NonNull String name, @NonNull RealmFieldConverter<Byte, Value> attributeConverter) {
-        super(modelType, name, attributeConverter, RealmFieldType.BYTE);
-    }
-
-    public static class RealmByteFieldConverter implements RealmFieldConverter<Byte, Byte> {
-
-        public static final RealmByteFieldConverter SHARED_INSTANCE = new RealmByteFieldConverter();
-
-        @Override
-        public Byte convertToValue(Byte attribute) {
-            return attribute;
+    @Override
+    public void equalTo(@NonNull RealmQuery<Model> query, @Nullable Byte value) {
+        if (value == null) {
+            this.isNull(query);
+            return;
         }
 
-        @Override
-        public Byte convertToRealmValue(Byte value) {
-            return value;
+        query.equalTo(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void notEqualTo(@NonNull RealmQuery<Model> query, @Nullable Byte value) {
+        if (value == null) {
+            this.isNotNull(query);
+            return;
         }
+
+        query.notEqualTo(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void never(@NonNull RealmQuery<Model> query) {
+        query.equalTo(this.getKeyPath(), (byte) 0).equalTo(this.getKeyPath(), (byte) 1);
     }
 }

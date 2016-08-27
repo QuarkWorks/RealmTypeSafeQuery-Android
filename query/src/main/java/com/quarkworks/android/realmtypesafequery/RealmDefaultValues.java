@@ -2,11 +2,12 @@ package com.quarkworks.android.realmtypesafequery;
 
 import java.util.Date;
 
+@SuppressWarnings("unused")
 public class RealmDefaultValues {
     public final static boolean BOOLEAN = false;
     public final static byte BYTE = 0x0;
     public final static short SHORT = 0;
-    public final static int INTIGER = 0;
+    public final static int INTEGER = 0;
     public final static long LONG = 0L;
 
     public final static float FLOAT = 0.0f;

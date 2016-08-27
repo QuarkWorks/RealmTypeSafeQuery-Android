@@ -1,43 +1,95 @@
 package com.quarkworks.android.realmtypesafequery.fields;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import com.quarkworks.android.realmtypesafequery.RealmField;
-import com.quarkworks.android.realmtypesafequery.RealmFieldType;
-import com.quarkworks.android.realmtypesafequery.converter.RealmFieldConverter;
+import com.quarkworks.android.realmtypesafequery.BaseRealmField;
+import com.quarkworks.android.realmtypesafequery.interfaces.RealmComparableField;
+import com.quarkworks.android.realmtypesafequery.interfaces.SortableRealmField;
 
 import java.util.Date;
 
 import io.realm.RealmModel;
+import io.realm.RealmQuery;
 
-public class RealmDateField<Model extends RealmModel, Value> extends RealmField<Model, Date, Value> {
+public class RealmDateField<Model extends RealmModel> extends BaseRealmField<Model, Date>
+        implements RealmComparableField<Model, Date>, SortableRealmField<Model, Date> {
 
-    @NonNull
-    public static <Model extends RealmModel> RealmDateField<Model, Date> create(@NonNull Class<Model> modelType, @NonNull String name) {
-        return new RealmDateField<>(modelType, name, RealmDateFieldConverter.SHARED_INSTANCE);
+    public RealmDateField(@NonNull Class<Model> modelClass, @NonNull String keyPath) {
+        super(modelClass, keyPath);
     }
 
-    @NonNull
-    public static <Model extends RealmModel, Value> RealmDateField<Model, Value> create(@NonNull Class<Model> modelType, @NonNull String name, RealmFieldConverter<Date, Value> converter) {
-        return new RealmDateField<>(modelType, name, converter);
-    }
-
-    public RealmDateField(@NonNull Class<Model> modelType, @NonNull String name, @NonNull RealmFieldConverter<Date, Value> attributeConverter) {
-        super(modelType, name, attributeConverter, RealmFieldType.DATE);
-    }
-
-    public static class RealmDateFieldConverter implements RealmFieldConverter<Date, Date> {
-
-        public static final RealmDateFieldConverter SHARED_INSTANCE = new RealmDateFieldConverter();
-
-        @Override
-        public Date convertToValue(Date attribute) {
-            return attribute;
+    @Override
+    public void equalTo(@NonNull RealmQuery<Model> query, @Nullable Date value) {
+        if (value == null) {
+            this.isNull(query);
+            return;
         }
 
-        @Override
-        public Date convertToRealmValue(Date value) {
-            return value;
+        query.equalTo(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void notEqualTo(@NonNull RealmQuery<Model> query, @Nullable Date value) {
+        if (value == null) {
+            this.isNotNull(query);
+            return;
         }
+
+        query.notEqualTo(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void never(@NonNull RealmQuery<Model> query) {
+        query.equalTo(this.getKeyPath(), new Date(0)).equalTo(this.getKeyPath(), new Date(1));
+    }
+
+    @Override
+    public void greaterThan(@NonNull RealmQuery<Model> query, @Nullable Date value) {
+        if (value == null) {
+            this.notEqualTo(query, null);
+            return;
+        }
+
+        query.greaterThan(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void greaterThanOrEqualTo(@NonNull RealmQuery<Model> query, @Nullable Date value) {
+        if (value == null) {
+            this.equalTo(query, null);
+            return;
+        }
+
+        query.greaterThanOrEqualTo(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void lessThan(@NonNull RealmQuery<Model> query, @Nullable Date value) {
+        if (value == null) {
+            this.notEqualTo(query, null);
+            return;
+        }
+
+        query.lessThan(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void lessThanOrEqualTo(@NonNull RealmQuery<Model> query, @Nullable Date value) {
+        if (value == null) {
+            this.equalTo(query, null);
+            return;
+        }
+
+        query.lessThanOrEqualTo(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void between(@NonNull RealmQuery<Model> query, @Nullable Date start, @Nullable Date end) {
+        if (start == null || end == null) {
+            this.equalTo(query, null);
+        }
+
+        query.between(this.getKeyPath(), start, end);
     }
 }

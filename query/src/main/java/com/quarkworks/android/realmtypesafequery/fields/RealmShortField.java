@@ -1,41 +1,93 @@
 package com.quarkworks.android.realmtypesafequery.fields;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import com.quarkworks.android.realmtypesafequery.RealmField;
-import com.quarkworks.android.realmtypesafequery.RealmFieldType;
-import com.quarkworks.android.realmtypesafequery.converter.RealmFieldConverter;
+import com.quarkworks.android.realmtypesafequery.BaseRealmField;
+import com.quarkworks.android.realmtypesafequery.interfaces.RealmComparableField;
+import com.quarkworks.android.realmtypesafequery.interfaces.SortableRealmField;
 
 import io.realm.RealmModel;
+import io.realm.RealmQuery;
 
-public class RealmShortField<Model extends RealmModel, Value> extends RealmField<Model, Short, Value> {
+public class RealmShortField<Model extends RealmModel> extends BaseRealmField<Model, Short>
+        implements RealmComparableField<Model, Short>, SortableRealmField<Model, Short> {
 
-    @NonNull
-    public static <Model extends RealmModel> RealmShortField<Model, Short> create(@NonNull Class<Model> modelType, @NonNull String name) {
-        return new RealmShortField<>(modelType, name, RealmShortFieldConverter.SHARED_INSTANCE);
+    public RealmShortField(@NonNull Class<Model> modelClass, @NonNull String keyPath) {
+        super(modelClass, keyPath);
     }
 
-    @NonNull
-    public static <Model extends RealmModel, Value> RealmShortField<Model, Value> create(@NonNull Class<Model> modelType, @NonNull String name, RealmFieldConverter<Short, Value> converter) {
-        return new RealmShortField<>(modelType, name, converter);
-    }
-
-    public RealmShortField(@NonNull Class<Model> modelType, @NonNull String name, @NonNull RealmFieldConverter<Short, Value> attributeConverter) {
-        super(modelType, name, attributeConverter, RealmFieldType.SHORT);
-    }
-
-    public static class RealmShortFieldConverter implements RealmFieldConverter<Short, Short> {
-
-        public static final RealmShortFieldConverter SHARED_INSTANCE = new RealmShortFieldConverter();
-
-        @Override
-        public Short convertToValue(Short attribute) {
-            return attribute;
+    @Override
+    public void equalTo(@NonNull RealmQuery<Model> query, @Nullable Short value) {
+        if (value == null) {
+            this.isNull(query);
+            return;
         }
 
-        @Override
-        public Short convertToRealmValue(Short value) {
-            return value;
+        query.equalTo(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void notEqualTo(@NonNull RealmQuery<Model> query, @Nullable Short value) {
+        if (value == null) {
+            this.isNotNull(query);
+            return;
         }
+
+        query.notEqualTo(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void never(@NonNull RealmQuery<Model> query) {
+        query.equalTo(this.getKeyPath(), (short) 0).equalTo(this.getKeyPath(), (short) 1);
+    }
+
+    @Override
+    public void greaterThan(@NonNull RealmQuery<Model> query, @Nullable Short value) {
+        if (value == null) {
+            this.notEqualTo(query, null);
+            return;
+        }
+
+        query.greaterThan(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void greaterThanOrEqualTo(@NonNull RealmQuery<Model> query, @Nullable Short value) {
+        if (value == null) {
+            this.equalTo(query, null);
+            return;
+        }
+
+        query.greaterThanOrEqualTo(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void lessThan(@NonNull RealmQuery<Model> query, @Nullable Short value) {
+        if (value == null) {
+            this.notEqualTo(query, null);
+            return;
+        }
+
+        query.lessThan(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void lessThanOrEqualTo(@NonNull RealmQuery<Model> query, @Nullable Short value) {
+        if (value == null) {
+            this.equalTo(query, null);
+            return;
+        }
+
+        query.lessThanOrEqualTo(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void between(@NonNull RealmQuery<Model> query, @Nullable Short start, @Nullable Short end) {
+        if (start == null || end == null) {
+            this.equalTo(query, null);
+        }
+
+        query.between(this.getKeyPath(), start, end);
     }
 }

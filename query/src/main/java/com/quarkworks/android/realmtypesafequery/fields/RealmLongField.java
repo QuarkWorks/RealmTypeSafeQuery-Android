@@ -1,42 +1,93 @@
 package com.quarkworks.android.realmtypesafequery.fields;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import com.quarkworks.android.realmtypesafequery.RealmField;
-import com.quarkworks.android.realmtypesafequery.RealmFieldType;
-import com.quarkworks.android.realmtypesafequery.converter.RealmFieldConverter;
+import com.quarkworks.android.realmtypesafequery.BaseRealmField;
+import com.quarkworks.android.realmtypesafequery.interfaces.RealmComparableField;
+import com.quarkworks.android.realmtypesafequery.interfaces.SortableRealmField;
 
 import io.realm.RealmModel;
+import io.realm.RealmQuery;
 
-public class RealmLongField<Model extends RealmModel, Value> extends RealmField<Model, Long, Value> {
+public class RealmLongField<Model extends RealmModel> extends BaseRealmField<Model, Long>
+        implements RealmComparableField<Model, Long>, SortableRealmField<Model, Long> {
 
-    @NonNull
-    public static <Model extends RealmModel> RealmLongField<Model, Long> create(@NonNull Class<Model> modelType, @NonNull String name) {
-        return new RealmLongField<>(modelType, name, RealmLongFieldConverter.SHARED_INSTANCE);
+    public RealmLongField(@NonNull Class<Model> modelClass, @NonNull String keyPath) {
+        super(modelClass, keyPath);
     }
 
-    @NonNull
-    public static <Model extends RealmModel, Value> RealmLongField<Model, Value> create(@NonNull Class<Model> modelType, @NonNull String name, RealmFieldConverter<Long, Value> converter) {
-        return new RealmLongField<>(modelType, name, converter);
-    }
-
-    public RealmLongField(@NonNull Class<Model> modelType, @NonNull String name, @NonNull RealmFieldConverter<Long, Value> attributeConverter) {
-        super(modelType, name, attributeConverter, RealmFieldType.LONG);
-    }
-
-    public static class RealmLongFieldConverter implements RealmFieldConverter<Long, Long> {
-
-        public static final RealmLongFieldConverter SHARED_INSTANCE = new RealmLongFieldConverter();
-
-        @Override
-        public Long convertToValue(Long attribute) {
-            return attribute;
+    @Override
+    public void equalTo(@NonNull RealmQuery<Model> query, @Nullable Long value) {
+        if (value == null) {
+            this.isNull(query);
+            return;
         }
 
-        @Override
-        public Long convertToRealmValue(Long value) {
-            return value;
+        query.equalTo(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void notEqualTo(@NonNull RealmQuery<Model> query, @Nullable Long value) {
+        if (value == null) {
+            this.isNotNull(query);
+            return;
         }
 
+        query.notEqualTo(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void never(@NonNull RealmQuery<Model> query) {
+        query.equalTo(this.getKeyPath(), 0L).equalTo(this.getKeyPath(), 1L);
+    }
+
+    @Override
+    public void greaterThan(@NonNull RealmQuery<Model> query, @Nullable Long value) {
+        if (value == null) {
+            this.notEqualTo(query, null);
+            return;
+        }
+
+        query.greaterThan(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void greaterThanOrEqualTo(@NonNull RealmQuery<Model> query, @Nullable Long value) {
+        if (value == null) {
+            this.equalTo(query, null);
+            return;
+        }
+
+        query.greaterThanOrEqualTo(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void lessThan(@NonNull RealmQuery<Model> query, @Nullable Long value) {
+        if (value == null) {
+            this.notEqualTo(query, null);
+            return;
+        }
+
+        query.lessThan(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void lessThanOrEqualTo(@NonNull RealmQuery<Model> query, @Nullable Long value) {
+        if (value == null) {
+            this.equalTo(query, null);
+            return;
+        }
+
+        query.lessThanOrEqualTo(this.getKeyPath(), value);
+    }
+
+    @Override
+    public void between(@NonNull RealmQuery<Model> query, @Nullable Long start, @Nullable Long end) {
+        if (start == null || end == null) {
+            this.equalTo(query, null);
+        }
+
+        query.between(this.getKeyPath(), start, end);
     }
 }
