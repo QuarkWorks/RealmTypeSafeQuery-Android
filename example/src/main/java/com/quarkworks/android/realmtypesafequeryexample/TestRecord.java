@@ -4,6 +4,7 @@ package com.quarkworks.android.realmtypesafequeryexample;
 import android.support.annotation.Nullable;
 
 import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFieldNames;
+import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFields;
 
 import java.util.Date;
 
@@ -15,6 +16,7 @@ import io.realm.annotations.RealmClass;
 
 @RealmClass
 @GenerateRealmFieldNames
+@GenerateRealmFields
 public class TestRecord implements RealmModel {
 
     @Nullable

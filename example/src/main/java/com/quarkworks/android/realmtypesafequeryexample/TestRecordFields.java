@@ -13,7 +13,7 @@ import com.quarkworks.android.realmtypesafequery.fields.RealmStringField;
 import com.quarkworks.android.realmtypesafequery.fields.indexed.RealmIndexedStringField;
 
 @SuppressWarnings("unused")
-public class TestRecordFields {
+public class  TestRecordFields {
     public static final RealmBooleanField<TestRecord> BOOLEAN_FIELD = new RealmBooleanField<>(TestRecord.class, "booleanField");
     public static final RealmByteArrayField<TestRecord> BYTE_ARRAY_FIELD = new RealmByteArrayField<>(TestRecord.class, "byteArrayField");
     public static final RealmByteField<TestRecord> BYTE_FIELD = new RealmByteField<>(TestRecord.class, "byteField");
