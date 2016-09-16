@@ -6,10 +6,11 @@ import android.util.Log;
 
 import com.quarkworks.android.realmtypesafequery.RealmTypeSafeQuery;
 import com.quarkworks.android.realmtypesafequery.generated.TestRecordFieldNames;
+import com.quarkworks.android.realmtypesafequery.generated.TestRecordFields;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.Sort;
+
 
 public class MainActivity extends AppCompatActivity {
 

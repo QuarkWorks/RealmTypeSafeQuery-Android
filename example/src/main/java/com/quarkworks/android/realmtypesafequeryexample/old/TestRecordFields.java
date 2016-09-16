@@ -1,4 +1,4 @@
-package com.quarkworks.android.realmtypesafequeryexample;
+package com.quarkworks.android.realmtypesafequeryexample.old;
 
 import com.quarkworks.android.realmtypesafequery.fields.RealmBooleanField;
 import com.quarkworks.android.realmtypesafequery.fields.RealmByteArrayField;
@@ -11,6 +11,7 @@ import com.quarkworks.android.realmtypesafequery.fields.RealmLongField;
 import com.quarkworks.android.realmtypesafequery.fields.RealmShortField;
 import com.quarkworks.android.realmtypesafequery.fields.RealmStringField;
 import com.quarkworks.android.realmtypesafequery.fields.indexed.RealmIndexedStringField;
+import com.quarkworks.android.realmtypesafequeryexample.TestRecord;
 
 @SuppressWarnings("unused")
 public class  TestRecordFields {
