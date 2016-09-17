@@ -1,6 +1,7 @@
 package com.quarkworks.android.realmtypesafequeryexample;
 
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFieldNames;
@@ -8,6 +9,7 @@ import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFields
 
 import java.util.Date;
 
+import io.realm.RealmList;
 import io.realm.RealmModel;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.Index;
@@ -57,4 +59,10 @@ public class TestRecord implements RealmModel {
 
     @PrimaryKey
     public String primaryKey;
+
+    @Nullable
+    public TestRecord parent = null;
+
+    @NonNull
+    public RealmList<TestRecord> children = new RealmList<>();
 }

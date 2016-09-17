@@ -7,14 +7,21 @@ import android.util.Log;
 import com.quarkworks.android.realmtypesafequery.RealmTypeSafeQuery;
 import com.quarkworks.android.realmtypesafequery.generated.TestRecordFieldNames;
 import com.quarkworks.android.realmtypesafequery.generated.TestRecordFields;
+import com.quarkworks.android.realmtypesafequery.relationships.RealmToManyRelationship;
+import com.quarkworks.android.realmtypesafequery.relationships.RealmToOneRelationship;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
-
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    // TODO: @James generate me
+    public class _TestRecordFields {
+        RealmToOneRelationship<TestRecord, TestRecord> PARENT = new RealmToOneRelationship<>(TestRecord.class, "parent");
+        RealmToManyRelationship<TestRecord, TestRecord> CHILDREN = new RealmToManyRelationship<>(TestRecord.class, "children");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
                 realm.createObject(TestRecord.class);
             }
         });
-
 
         RealmTypeSafeQuery.where(realm, TestRecord.class).equalTo(TestRecordFields.STRING_FIELD, "11").findFirst();
         Log.d(TAG, "Find: " + RealmTypeSafeQuery.findFirst(realm, TestRecordFields.STRING_FIELD, "1"));
