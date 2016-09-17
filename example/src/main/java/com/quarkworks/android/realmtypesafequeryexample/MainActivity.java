@@ -10,6 +10,8 @@ import com.quarkworks.android.realmtypesafequery.generated.TestRecordFields;
 import com.quarkworks.android.realmtypesafequery.relationships.RealmToManyRelationship;
 import com.quarkworks.android.realmtypesafequery.relationships.RealmToOneRelationship;
 
+import java.util.Date;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -40,16 +42,32 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void execute(Realm realm) {
                 realm.deleteAll();
-                realm.createObject(TestRecord.class).stringField = "1";
-                realm.createObject(TestRecord.class).stringField = "11";
-                realm.createObject(TestRecord.class).stringField = "2";
-                realm.createObject(TestRecord.class);
-                realm.createObject(TestRecord.class);
+                for (int i = 0; i < 10; i++) {
+                    TestRecord record = realm.createObject(TestRecord.class);
+                    record.booleanField = i % 2 == 0;
+                    record.byteArrayField = new byte[] {(byte) i};
+                    record.byteField = (byte) i;
+                    record.dateField = new Date(i * 1000);
+                    record.doubleField = i * 1000d;
+                    record.floatField = i * 2000f;
+                    record.integerField = i;
+                    record.longField = i * 10L;
+                    record.shortField = (short) i;
+                    record.stringField = i % 3 == 0 ? null :String.valueOf(i);
+                    record.ignoredField = new Object();
+                    record.indexedField = "indexed value: " + i;
+                    record.primaryKey = String.valueOf(i);
+                    record.requiredField = String.valueOf(i);
+                }
             }
         });
 
-        RealmTypeSafeQuery.where(realm, TestRecord.class).equalTo(TestRecordFields.STRING_FIELD, "11").findFirst();
-        Log.d(TAG, "Find: " + RealmTypeSafeQuery.findFirst(realm, TestRecordFields.STRING_FIELD, "1"));
+        Log.d(TAG, "Count:" + RealmTypeSafeQuery.where(TestRecord.class).count());
+
+        Log.d(TAG, "Equal To 1: " + RealmTypeSafeQuery.where(TestRecord.class).equalTo(TestRecordFields.STRING_FIELD, "1").findAll().toString());
+        Log.d(TAG, "Equal To null: " + RealmTypeSafeQuery.where(TestRecord.class).equalTo(TestRecordFields.STRING_FIELD, null).findAll().toString());
+        Log.d(TAG, "IsNull: " + RealmTypeSafeQuery.where(TestRecord.class).isNull(TestRecordFields.STRING_FIELD).findAll().toString());
+        Log.d(TAG, "IsNotNull: " + RealmTypeSafeQuery.where(TestRecord.class).isNotNull(TestRecordFields.STRING_FIELD).findAll().toString());
 
         realm.close();
     }
