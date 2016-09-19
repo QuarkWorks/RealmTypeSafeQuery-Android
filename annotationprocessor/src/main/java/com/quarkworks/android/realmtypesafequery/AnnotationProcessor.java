@@ -3,7 +3,6 @@ package com.quarkworks.android.realmtypesafequery;
 import com.google.auto.service.AutoService;
 import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFieldNames;
 import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFields;
-import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -12,12 +11,13 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedSourceVersion;
@@ -26,6 +26,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.tools.Diagnostic;
@@ -40,14 +41,25 @@ import io.realm.annotations.PrimaryKey;
 public class AnnotationProcessor extends AbstractProcessor {
 
     private static final Modifier[] fieldSpecs_modifiers = {Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL};
+    private TypeElement realmModel;
+    private TypeElement realmList;
+    private TypeMirror realmList_erasure;
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        Set<String> set = new LinkedHashSet<>();
+        Set<String> set = new HashSet<>();
         set.add(GenerateRealmFieldNames.class.getCanonicalName());
         set.add(GenerateRealmFields.class.getCanonicalName());
 
         return set;
+    }
+
+    @Override
+    public synchronized void init(ProcessingEnvironment processingEnvironment) {
+        super.init(processingEnvironment);
+        realmModel = processingEnvironment.getElementUtils().getTypeElement("io.realm.RealmModel");
+        realmList = processingEnvironment.getElementUtils().getTypeElement("io.realm.RealmList");
+        realmList_erasure = processingEnvironment.getTypeUtils().erasure(realmList.asType());
     }
 
     @Override //synchronized not needed
@@ -99,26 +111,87 @@ public class AnnotationProcessor extends AbstractProcessor {
         }
     }
 
+
     private FieldSpec makeFieldSpec(Element realmClassElement, Element realmFieldElement) {
-        String klass = realmFieldElement.asType().toString();
+
+        if (processingEnv.getTypeUtils().isSubtype(realmFieldElement.asType(), realmModel.asType())) {
+            return makeToOne(realmClassElement, realmFieldElement);
+        }
+        if (processingEnv.getTypeUtils().isSameType(processingEnv.getTypeUtils().erasure(realmFieldElement.asType()), realmList_erasure)) {
+            return makeToMany(realmClassElement, realmFieldElement);
+        }
+        //logall("makeFieldSpec:", realmFieldElement.toString() );
+        //logall(realmFieldElement.asType().toString(), realmList_erasure.toString());
+        String rfe_klass = realmFieldElement.asType().toString();
         String field_name = realmFieldElement.getSimpleName().toString();
         String field_name_constant = field_name
                 .replaceAll("([a-z])([A-Z])", "$1_$2").toUpperCase();
+
         boolean isPk = null != realmFieldElement.getAnnotation(PrimaryKey.class);
         boolean isIndex = null != realmFieldElement.getAnnotation(Index.class);
         TypeMirror rce_tm = realmClassElement.asType();
         FieldSpec fs;
+        //logall("line no 131", rfe_klass, field_name);
         if (!isPk && !isIndex) {
-            ParameterizedTypeName pt_n = ParameterizedTypeName.get(Maps.BaseMap.get(klass), TypeName.get(rce_tm));
+            ParameterizedTypeName pt_n = ParameterizedTypeName.get(Maps.BaseMap.get(rfe_klass), TypeName.get(rce_tm));
             fs = FieldSpec.builder(pt_n, field_name_constant, fieldSpecs_modifiers)
                     .initializer("new $T($T.class, $S)", pt_n, TypeName.get(rce_tm), field_name).build();
         } else {
             ParameterizedTypeName pt_n = ParameterizedTypeName
-                    .get(Maps.IndexMap.get(Maps.BaseMap.get(klass)), TypeName.get(rce_tm));
+                    .get(Maps.IndexMap.get(Maps.BaseMap.get(rfe_klass)), TypeName.get(rce_tm));
             fs = FieldSpec.builder(pt_n, field_name_constant, fieldSpecs_modifiers)
                     .initializer("new $T($T.class, $S)", pt_n, TypeName.get(rce_tm), field_name).build();
         }
         return fs;
+    }
+    private CharSequence cat(List in)
+    {
+        StringBuilder b = new StringBuilder();
+        for (Object i: in)
+        {
+            b.append("\"");
+            b.append(i.toString());
+            b.append("\", ");
+        }
+        return b;
+    }
+    private FieldSpec makeToMany(Element realmClassElement, Element realmFieldElement) {
+        TypeMirror rce_tm = realmClassElement.asType();
+        String field_name = realmFieldElement.getSimpleName().toString();
+        String field_name_constant = field_name
+                .replaceAll("([a-z])([A-Z])", "$1_$2").toUpperCase();
+        TypeElement rf_t = (TypeElement) ((DeclaredType)realmFieldElement.asType()).asElement();
+//        logall( "makeToMany field_name:", field_name);
+//        logall("rft: ", rf_t.toString());
+//        logall(cat(rf_t.getTypeParameters()));
+//        logall("((DeclaredType)realmFieldElement.asType()).getTypeArguments()",
+//                cat(((DeclaredType)realmFieldElement.asType()).getTypeArguments()));
+        ParameterizedTypeName pt_n = ParameterizedTypeName.get(Maps.realmtomanyrelationship,
+                TypeName.get(rce_tm),
+                TypeName.get((((DeclaredType)realmFieldElement.asType()).getTypeArguments()).get(0)));
+
+//        logall( "makeToMany pt_n:", pt_n.toString());
+        return FieldSpec.builder(pt_n, field_name_constant, fieldSpecs_modifiers)
+                .initializer("new $T($T.class, $S)", pt_n, TypeName.get(rce_tm), field_name).build();
+
+    }
+
+    private FieldSpec makeToOne(Element realmClassElement, Element realmFieldElement) {
+        TypeMirror rce_tm = realmClassElement.asType();
+        String rfe_klass = realmFieldElement.asType().toString();
+        String field_name = realmFieldElement.getSimpleName().toString();
+        String field_name_constant = field_name
+                .replaceAll("([a-z])([A-Z])", "$1_$2").toUpperCase();
+//        logall( "makeToOne field_name:", field_name);
+        ParameterizedTypeName pt_n = ParameterizedTypeName.get(Maps.realmtomanyrelationship,
+                TypeName.get(rce_tm),
+                TypeName.get((realmFieldElement).asType()));
+
+//        logall( "makeToOne pt_n:", pt_n.toString());
+//        logall("and", rce_tm.toString());
+        return FieldSpec.builder(pt_n, field_name_constant, fieldSpecs_modifiers)
+                .initializer("new $T($T.class, $S)", pt_n, TypeName.get(rce_tm), field_name).build();
+
     }
 
     private void generateRealmFields(RoundEnvironment roundEnv) {
@@ -135,8 +208,10 @@ public class AnnotationProcessor extends AbstractProcessor {
                 boolean isIgnored = realmFieldElement.getAnnotation(Ignore.class) != null;
                 if (isIgnored) continue;
 
+                //logall("line no 138",realmClassElement.toString(), realmFieldElement.toString());
                 realmFieldClassFSpecs.add(makeFieldSpec(realmClassElement, realmFieldElement));
             }
+
             String packageName = this.getClass().getPackage().getName() + ".generated";
             String className = realmClassElement.getSimpleName() + "Fields";
 
@@ -155,6 +230,12 @@ public class AnnotationProcessor extends AbstractProcessor {
         }
     }
 
+//    private void logall(CharSequence... rest) {
+//        for (CharSequence m : rest) {
+//            log(m);
+//        }
+//    }
+
 
     private void reportError(Element element, CharSequence message) {
         this.processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message, element);
@@ -167,4 +248,6 @@ public class AnnotationProcessor extends AbstractProcessor {
     private void log(CharSequence message) {
         this.processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, message);
     }
+
+
 }
