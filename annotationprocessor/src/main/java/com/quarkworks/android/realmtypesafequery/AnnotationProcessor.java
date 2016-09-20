@@ -42,6 +42,7 @@ public class AnnotationProcessor extends AbstractProcessor {
 
     private static final Modifier[] fieldSpecs_modifiers = {Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL};
     private TypeElement realmModel;
+    @SuppressWarnings("FieldCanBeLocal")
     private TypeElement realmList;
     private TypeMirror realmList_erasure;
 
@@ -120,8 +121,6 @@ public class AnnotationProcessor extends AbstractProcessor {
         if (processingEnv.getTypeUtils().isSameType(processingEnv.getTypeUtils().erasure(realmFieldElement.asType()), realmList_erasure)) {
             return makeToMany(realmClassElement, realmFieldElement);
         }
-        //logall("makeFieldSpec:", realmFieldElement.toString() );
-        //logall(realmFieldElement.asType().toString(), realmList_erasure.toString());
         String rfe_klass = realmFieldElement.asType().toString();
         String field_name = realmFieldElement.getSimpleName().toString();
         String field_name_constant = field_name
@@ -131,7 +130,7 @@ public class AnnotationProcessor extends AbstractProcessor {
         boolean isIndex = null != realmFieldElement.getAnnotation(Index.class);
         TypeMirror rce_tm = realmClassElement.asType();
         FieldSpec fs;
-        //logall("line no 131", rfe_klass, field_name);
+
         if (!isPk && !isIndex) {
             ParameterizedTypeName pt_n = ParameterizedTypeName.get(Maps.BaseMap.get(rfe_klass), TypeName.get(rce_tm));
             fs = FieldSpec.builder(pt_n, field_name_constant, fieldSpecs_modifiers)
@@ -144,33 +143,16 @@ public class AnnotationProcessor extends AbstractProcessor {
         }
         return fs;
     }
-    private CharSequence cat(List in)
-    {
-        StringBuilder b = new StringBuilder();
-        for (Object i: in)
-        {
-            b.append("\"");
-            b.append(i.toString());
-            b.append("\", ");
-        }
-        return b;
-    }
     private FieldSpec makeToMany(Element realmClassElement, Element realmFieldElement) {
         TypeMirror rce_tm = realmClassElement.asType();
         String field_name = realmFieldElement.getSimpleName().toString();
         String field_name_constant = field_name
                 .replaceAll("([a-z])([A-Z])", "$1_$2").toUpperCase();
-        TypeElement rf_t = (TypeElement) ((DeclaredType)realmFieldElement.asType()).asElement();
-//        logall( "makeToMany field_name:", field_name);
-//        logall("rft: ", rf_t.toString());
-//        logall(cat(rf_t.getTypeParameters()));
-//        logall("((DeclaredType)realmFieldElement.asType()).getTypeArguments()",
-//                cat(((DeclaredType)realmFieldElement.asType()).getTypeArguments()));
+
         ParameterizedTypeName pt_n = ParameterizedTypeName.get(Maps.realmtomanyrelationship,
                 TypeName.get(rce_tm),
                 TypeName.get((((DeclaredType)realmFieldElement.asType()).getTypeArguments()).get(0)));
 
-//        logall( "makeToMany pt_n:", pt_n.toString());
         return FieldSpec.builder(pt_n, field_name_constant, fieldSpecs_modifiers)
                 .initializer("new $T($T.class, $S)", pt_n, TypeName.get(rce_tm), field_name).build();
 
@@ -178,17 +160,13 @@ public class AnnotationProcessor extends AbstractProcessor {
 
     private FieldSpec makeToOne(Element realmClassElement, Element realmFieldElement) {
         TypeMirror rce_tm = realmClassElement.asType();
-        String rfe_klass = realmFieldElement.asType().toString();
         String field_name = realmFieldElement.getSimpleName().toString();
         String field_name_constant = field_name
                 .replaceAll("([a-z])([A-Z])", "$1_$2").toUpperCase();
-//        logall( "makeToOne field_name:", field_name);
-        ParameterizedTypeName pt_n = ParameterizedTypeName.get(Maps.realmtomanyrelationship,
+        ParameterizedTypeName pt_n = ParameterizedTypeName.get(Maps.realmtoonerelationship,
                 TypeName.get(rce_tm),
                 TypeName.get((realmFieldElement).asType()));
 
-//        logall( "makeToOne pt_n:", pt_n.toString());
-//        logall("and", rce_tm.toString());
         return FieldSpec.builder(pt_n, field_name_constant, fieldSpecs_modifiers)
                 .initializer("new $T($T.class, $S)", pt_n, TypeName.get(rce_tm), field_name).build();
 
@@ -208,7 +186,6 @@ public class AnnotationProcessor extends AbstractProcessor {
                 boolean isIgnored = realmFieldElement.getAnnotation(Ignore.class) != null;
                 if (isIgnored) continue;
 
-                //logall("line no 138",realmClassElement.toString(), realmFieldElement.toString());
                 realmFieldClassFSpecs.add(makeFieldSpec(realmClassElement, realmFieldElement));
             }
 
@@ -230,11 +207,6 @@ public class AnnotationProcessor extends AbstractProcessor {
         }
     }
 
-//    private void logall(CharSequence... rest) {
-//        for (CharSequence m : rest) {
-//            log(m);
-//        }
-//    }
 
 
     private void reportError(Element element, CharSequence message) {
@@ -249,5 +221,22 @@ public class AnnotationProcessor extends AbstractProcessor {
         this.processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, message);
     }
 
+    private CharSequence cat(List in)
+    {
+        StringBuilder b = new StringBuilder();
+        for (Object i: in)
+        {
+            b.append("\"");
+            b.append(i.toString());
+            b.append("\", ");
+        }
+        return b;
+    }
+
+    private void logall(CharSequence... rest) {
+        for (CharSequence m : rest) {
+            log(m);
+        }
+    }
 
 }
