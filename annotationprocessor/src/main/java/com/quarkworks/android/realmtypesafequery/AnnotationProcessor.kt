@@ -61,7 +61,8 @@ class AnnotationProcessor : AbstractProcessor() {
         typeUtils = processingEnv.typeUtils
         elementUtils = processingEnv.elementUtils
         realmModel = elementUtils!!.getTypeElement("io.realm.RealmModel").asType() as DeclaredType
-        realmList_erasure = typeUtils!!.erasure(elementUtils!!.getTypeElement("io.realm.RealmList").asType())
+        realmList_erasure = typeUtils!!.erasure(elementUtils!!.getTypeElement("io.realm.RealmList")
+                .asType())
     }
 
     @Synchronized override //synchronized not needed
@@ -85,14 +86,17 @@ class AnnotationProcessor : AbstractProcessor() {
 
                 val name = toConstId(realmField.simpleName.toString())
 
-                val fieldSpec = FieldSpec.builder(String::class.java, name, *fieldSpecs_modifiers).initializer("\$S", realmField.simpleName).build()
+                val fieldSpec = FieldSpec.builder(String::class.java, name, *fieldSpecs_modifiers)
+                        .initializer("\$S", realmField.simpleName)
+                        .build()
 
                 fieldSpecs.add(fieldSpec)
             }
 
             val className = element.simpleName.toString() + "FieldNames"
 
-            val typeSpec = TypeSpec.classBuilder(className).addFields(fieldSpecs).addModifiers(Modifier.PUBLIC).build()
+            val typeSpec = TypeSpec.classBuilder(className).addFields(fieldSpecs)
+                    .addModifiers(Modifier.PUBLIC).build()
 
             val javaFile = JavaFile.builder(packageName, typeSpec).build()
 
@@ -106,7 +110,7 @@ class AnnotationProcessor : AbstractProcessor() {
     }
 
     private fun makeFieldSpec(realmClassElement: Element, realmFieldElement: Element): FieldSpec {
-
+        
         if (typeUtils!!.isSubtype(realmFieldElement.asType(), realmModel)) {
             return makeToOne(realmClassElement, realmFieldElement)
         }
@@ -115,7 +119,7 @@ class AnnotationProcessor : AbstractProcessor() {
         }
         val rfe_klass = realmFieldElement.asType().toString()
         val field_name = realmFieldElement.simpleName.toString()
-        val field_name_constant = field_name.replace("([a-z])([A-Z])".toRegex(), "$1_$2").toUpperCase()
+        val field_name_constant = toConstId(field_name)
 
         val isPk = isAnnotatedWith(realmFieldElement, PrimaryKey::class.java)
         val isIndex = isAnnotatedWith(realmFieldElement, Index::class.java)
@@ -124,10 +128,14 @@ class AnnotationProcessor : AbstractProcessor() {
 
         if (!isPk && !isIndex) {
             val pt_n = ParameterizedTypeName.get(Maps.BaseMap[rfe_klass], TypeName.get(rce_tm))
-            fs = FieldSpec.builder(pt_n, field_name_constant, *fieldSpecs_modifiers).initializer("new \$T(\$T.class, \$S)", pt_n, TypeName.get(rce_tm), field_name).build()
+            fs = FieldSpec.builder(pt_n, field_name_constant, *fieldSpecs_modifiers)
+                    .initializer("new \$T(\$T.class, \$S)", pt_n, TypeName.get(rce_tm), field_name)
+                    .build()
         } else {
             val pt_n = ParameterizedTypeName.get(Maps.IndexMap[Maps.BaseMap[rfe_klass]], TypeName.get(rce_tm))
-            fs = FieldSpec.builder(pt_n, field_name_constant, *fieldSpecs_modifiers).initializer("new \$T(\$T.class, \$S)", pt_n, TypeName.get(rce_tm), field_name).build()
+            fs = FieldSpec.builder(pt_n, field_name_constant, *fieldSpecs_modifiers)
+                    .initializer("new \$T(\$T.class, \$S)", pt_n, TypeName.get(rce_tm), field_name)
+                    .build()
         }
         return fs
     }
@@ -135,25 +143,29 @@ class AnnotationProcessor : AbstractProcessor() {
     private fun makeToMany(realmClassElement: Element, realmFieldElement: Element): FieldSpec {
         val rce_tm = realmClassElement.asType()
         val field_name = realmFieldElement.simpleName.toString()
-        val field_name_constant = field_name.replace("([a-z])([A-Z])".toRegex(), "$1_$2").toUpperCase()
+        val field_name_constant = toConstId(field_name)
 
         val pt_n = ParameterizedTypeName.get(Maps.realmtomanyrelationship,
                 TypeName.get(rce_tm),
                 TypeName.get((realmFieldElement.asType() as DeclaredType).typeArguments[0]))
 
-        return FieldSpec.builder(pt_n, field_name_constant, *fieldSpecs_modifiers).initializer("new \$T(\$T.class, \$S)", pt_n, TypeName.get(rce_tm), field_name).build()
+        return FieldSpec.builder(pt_n, field_name_constant, *fieldSpecs_modifiers)
+                .initializer("new \$T(\$T.class, \$S)", pt_n, TypeName.get(rce_tm), field_name)
+                .build()
 
     }
 
     private fun makeToOne(realmClassElement: Element, realmFieldElement: Element): FieldSpec {
         val rce_tm = realmClassElement.asType()
         val field_name = realmFieldElement.simpleName.toString()
-        val field_name_constant = field_name.replace("([a-z])([A-Z])".toRegex(), "$1_$2").toUpperCase()
+        val field_name_constant = toConstId(field_name)
         val pt_n = ParameterizedTypeName.get(Maps.realmtoonerelationship,
                 TypeName.get(rce_tm),
                 TypeName.get(realmFieldElement.asType()))
 
-        return FieldSpec.builder(pt_n, field_name_constant, *fieldSpecs_modifiers).initializer("new \$T(\$T.class, \$S)", pt_n, TypeName.get(rce_tm), field_name).build()
+        return FieldSpec.builder(pt_n, field_name_constant, *fieldSpecs_modifiers)
+                .initializer("new \$T(\$T.class, \$S)", pt_n, TypeName.get(rce_tm), field_name)
+                .build()
 
     }
 
@@ -174,7 +186,10 @@ class AnnotationProcessor : AbstractProcessor() {
 
             val className = element.simpleName.toString() + "Fields"
 
-            val typeSpec = TypeSpec.classBuilder(className).addFields(realmFieldClassFSpecs).addModifiers(Modifier.PUBLIC).build()
+            val typeSpec = TypeSpec.classBuilder(className)
+                    .addFields(realmFieldClassFSpecs)
+                    .addModifiers(Modifier.PUBLIC)
+                    .build()
 
             val javaFile = JavaFile.builder(packageName, typeSpec).build()
 
