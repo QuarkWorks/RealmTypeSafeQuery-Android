@@ -40,8 +40,6 @@ import io.realm.annotations.PrimaryKey
 class AnnotationProcessor : AbstractProcessor() {
     private val packageName: String
     private var realmModel: DeclaredType? = null
-    @SuppressWarnings("FieldCanBeLocal")
-    private val realmList: TypeElement? = null
     private var realmList_erasure: TypeMirror? = null
     private var typeUtils: Types? = null
     private var elementUtils: Elements? = null
@@ -223,6 +221,7 @@ class AnnotationProcessor : AbstractProcessor() {
         private val fieldSpecs_modifiers = arrayOf(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
 
         private fun isAnnotatedWith(element: Element, annotation: Class<out Annotation>): Boolean {
+
             return element.getAnnotation(annotation) != null
         }
 
