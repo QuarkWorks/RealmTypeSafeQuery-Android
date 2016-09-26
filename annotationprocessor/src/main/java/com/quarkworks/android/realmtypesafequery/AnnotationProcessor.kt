@@ -58,6 +58,7 @@ class AnnotationProcessor : AbstractProcessor() {
 
     @Synchronized override fun init(processingEnvironment: ProcessingEnvironment) {
         super.init(processingEnvironment)
+        log("GIT_COMMIT:${GIT_COMMIT.`val`}")
         typeUtils = processingEnv.typeUtils
         elementUtils = processingEnv.elementUtils
         realmModel = elementUtils!!.getTypeElement("io.realm.RealmModel").asType() as DeclaredType
