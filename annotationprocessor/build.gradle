@@ -2,7 +2,18 @@ apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: 'maven' // jitpack.io
 
+buildscript {
+    repositories{
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.squareup:javapoet:1.7.0'
+    }
+}
+
 group='com.github.quarkworks' // jitpack.io
+def source_GIT_COMMIT = new File(buildDir, 'generated/source/GIT_COMMIT/')
+
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -14,11 +25,35 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
-
-
 repositories {
     mavenCentral()
 }
 sourceSets {
     main.java.srcDirs += 'src/main/kotlin'
+    main.java.srcDirs += source_GIT_COMMIT
 }
+
+
+import com.squareup.javapoet.FieldSpec
+import com.squareup.javapoet.JavaFile
+import com.squareup.javapoet.TypeName
+import com.squareup.javapoet.TypeSpec
+
+import javax.lang.model.element.Modifier
+
+task makeGIT_COMMIT {
+    ext.GIT_COMMIT = System.getenv()['GIT_COMMIT'] ?: "Not Set"
+
+    if (ext.GIT_COMMIT != null)
+    {
+        def fs = FieldSpec.builder(TypeName.get(String.class), "val", Modifier.STATIC)
+                .initializer('$S', ext.GIT_COMMIT).build()
+        def ts = TypeSpec.classBuilder("GIT_COMMIT").addField(fs).build()
+        JavaFile.builder("com.quarkworks.android.realmtypesafequery", ts)
+        .build().writeTo(source_GIT_COMMIT)
+
+    }
+}
+build.dependsOn makeGIT_COMMIT
+
+
