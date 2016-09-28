@@ -12,7 +12,7 @@ buildscript {
 }
 
 group='com.github.quarkworks' // jitpack.io
-def source_GIT_COMMIT = new File(buildDir, 'generated/source/GIT_COMMIT/')
+def source_GIT_COMMIT = new File(buildDir, 'generated/source/GIT_COMMIT/main/java')
 
 
 dependencies {
