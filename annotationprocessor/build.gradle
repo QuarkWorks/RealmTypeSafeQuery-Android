@@ -41,7 +41,7 @@ import com.squareup.javapoet.TypeSpec
 
 import javax.lang.model.element.Modifier
 
-task makeGIT_COMMIT {
+task compileKotlin.doFirst {
     ext.GIT_COMMIT = System.getenv()['GIT_COMMIT'] ?: "Not Set"
 
     if (ext.GIT_COMMIT != null)
@@ -54,6 +54,7 @@ task makeGIT_COMMIT {
 
     }
 }
-compileKotlin.dependsOn makeGIT_COMMIT
+
+
 
 
