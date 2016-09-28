@@ -54,6 +54,6 @@ task makeGIT_COMMIT {
 
     }
 }
-build.dependsOn makeGIT_COMMIT
+compileKotlin.dependsOn makeGIT_COMMIT
 
 
