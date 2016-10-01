@@ -1,4 +1,4 @@
-package com.quarkworks.android.realmtypesafequery
+package com.quarkworks.android.realmtypesafequery.annotationprocessor
 
 import com.google.auto.service.AutoService
 import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFieldNames
@@ -45,7 +45,7 @@ class AnnotationProcessor : AbstractProcessor() {
     private var elementUtils: Elements? = null
 
     init {
-        packageName = this.javaClass.`package`.name + ".generated"
+        packageName = "com.quarkworks.android.realmtypesafequery" + ".generated"
     }
 
     override fun getSupportedAnnotationTypes(): Set<String> {

@@ -1,4 +1,4 @@
-package com.quarkworks.android.realmtypesafequery;
+package com.quarkworks.android.realmtypesafequery.annotationprocessor;
 
 
 import com.squareup.javapoet.ClassName;

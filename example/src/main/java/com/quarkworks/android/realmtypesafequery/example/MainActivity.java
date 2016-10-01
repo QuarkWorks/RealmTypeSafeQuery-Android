@@ -1,8 +1,9 @@
-package com.quarkworks.android.realmtypesafequeryexample;
+package com.quarkworks.android.realmtypesafequery.example;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+
 
 import com.quarkworks.android.realmtypesafequery.RealmTypeSafeQuery;
 import com.quarkworks.android.realmtypesafequery.generated.TestRecordFieldNames;

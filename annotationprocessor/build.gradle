@@ -49,7 +49,7 @@ task compileKotlin.doFirst {
         def fs = FieldSpec.builder(TypeName.get(String.class), "val", Modifier.STATIC)
                 .initializer('$S', ext.GIT_COMMIT).build()
         def ts = TypeSpec.classBuilder("GIT_COMMIT").addField(fs).build()
-        JavaFile.builder("com.quarkworks.android.realmtypesafequery", ts)
+        JavaFile.builder("com.quarkworks.android.realmtypesafequery.annotationprocessor", ts)
         .build().writeTo(source_GIT_COMMIT)
 
     }

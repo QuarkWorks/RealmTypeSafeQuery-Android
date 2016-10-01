@@ -1,4 +1,4 @@
-package com.quarkworks.android.realmtypesafequeryexample;
+package com.quarkworks.android.realmtypesafequery.example;
 
 import org.junit.Test;
 
