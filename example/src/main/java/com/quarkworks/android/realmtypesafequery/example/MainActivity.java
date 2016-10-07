@@ -20,11 +20,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    // TODO: @James generate me
-    public class _TestRecordFields {
-        RealmToOneRelationship<TestRecord, TestRecord> PARENT = new RealmToOneRelationship<>(TestRecord.class, "parent");
-        RealmToManyRelationship<TestRecord, TestRecord> CHILDREN = new RealmToManyRelationship<>(TestRecord.class, "children");
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
