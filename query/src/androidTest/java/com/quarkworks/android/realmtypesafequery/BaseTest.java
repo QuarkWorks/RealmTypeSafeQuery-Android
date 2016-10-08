@@ -73,19 +73,21 @@ public class BaseTest {
 
     @Test
     public void _01_test() {
-        assertEquals(10, RealmTypeSafeQuery.where(TestRecord.class).count());
+        assertEquals(10, RealmTypeSafeQuery.where(defaultInstance, TestRecord.class).count());
     }
 
     @Test
     public void _02_test() {
-        TestRecord t = RealmTypeSafeQuery.where(TestRecord.class).equalTo(TestRecordFields.STRING_FIELD, "1").findFirst();
+        TestRecord t = RealmTypeSafeQuery.where(defaultInstance, TestRecord.class).equalTo(TestRecordFields.STRING_FIELD, "1").findFirst();
         assertNotEquals(null, t);
         assertEquals("1", t.stringField);
     }
 
     @Test
     public void _03_test() {
-        assertEquals(null, RealmTypeSafeQuery.where(TestRecord.class).equalTo(TestRecordFields.STRING_FIELD, null).findFirst());
+
+        TestRecord t = RealmTypeSafeQuery.where(defaultInstance, TestRecord.class).equalTo(TestRecordFields.STRING_FIELD, null).findFirst();
+        assertEquals(null, t.stringField);
     }
 
     @Test
