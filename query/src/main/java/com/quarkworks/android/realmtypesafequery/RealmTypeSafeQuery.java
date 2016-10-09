@@ -177,7 +177,8 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
         return this.in(field, Arrays.asList(values));
     }
 
-    @NonNull <V> RealmTypeSafeQuery<Model> in(@NonNull RealmField<Model, V> field, @NonNull List<V> values) {
+    @NonNull 
+	public <V> RealmTypeSafeQuery<Model> in(@NonNull RealmField<Model, V> field, @NonNull List<V> values) {
         // taken from io.realm.RealmQuery.in()
         if (values.size() == 0) {return this;}
 
@@ -374,22 +375,26 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
         Empty
      */
 
-    @NonNull RealmTypeSafeQuery<Model> isEmpty(@NonNull RealmEmptyableField<Model, ?> field) {
+    @NonNull 
+	public RealmTypeSafeQuery<Model> isEmpty(@NonNull RealmEmptyableField<Model, ?> field) {
         this.realmQuery.isEmpty(field.getKeyPath());
         return this;
     }
 
-    @NonNull RealmTypeSafeQuery<Model> isNotEmpty(@NonNull RealmEmptyableField<Model, ?> field) {
+    @NonNull 
+	public RealmTypeSafeQuery<Model> isNotEmpty(@NonNull RealmEmptyableField<Model, ?> field) {
         this.realmQuery.isNotEmpty(field.getKeyPath());
         return this;
     }
 
-    @NonNull RealmTypeSafeQuery<Model> isEmpty(@NonNull RealmToManyRelationship<Model, ?> field) {
+    @NonNull 
+	public RealmTypeSafeQuery<Model> isEmpty(@NonNull RealmToManyRelationship<Model, ?> field) {
         this.realmQuery.isEmpty(field.getKeyPath());
         return this;
     }
 
-    @NonNull RealmTypeSafeQuery<Model> isNotEmpty(@NonNull RealmToManyRelationship<Model, ?> field) {
+    @NonNull 
+	public RealmTypeSafeQuery<Model> isNotEmpty(@NonNull RealmToManyRelationship<Model, ?> field) {
         this.realmQuery.isNotEmpty(field.getKeyPath());
         return this;
     }
@@ -445,7 +450,7 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
     }
 
     @NonNull
-    private Pair<String[], Sort[]> createRealmSortParams() {
+    public Pair<String[], Sort[]> sortParams() {
         String[] fieldKeyPaths = new String[this.sortOrders.size()];
         Sort[] sorts = new Sort[this.sortOrders.size()];
 
@@ -468,7 +473,7 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
 
     @NonNull
     public RealmResults<Model> findAll() {
-        Pair<String[], Sort[]> sortParams = this.createRealmSortParams();
+        Pair<String[], Sort[]> sortParams = this.sortParams();
         if (sortParams.first.length == 0) {
             return this.realmQuery.findAll();
         }
@@ -478,7 +483,7 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
 
     @NonNull
     public RealmResults<Model> findAllAsync() {
-        Pair<String[], Sort[]> sortParams = this.createRealmSortParams();
+        Pair<String[], Sort[]> sortParams = this.sortParams();
         if (sortParams.first.length == 0) {
             return this.realmQuery.findAllAsync();
         }
