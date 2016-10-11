@@ -165,15 +165,7 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
 
     @SafeVarargs
     @NonNull
-    public final <V> RealmTypeSafeQuery<Model> in(@NonNull RealmField<Model, V> field, @NonNull V value, V... values) {
-        List<V> list = new ArrayList<>(values.length + 1);
-        list.add(value);
-        Collections.addAll(list,value);
-        return this.in(field, list);
-    }
-
-    @NonNull
-    public <V> RealmTypeSafeQuery<Model> in(@NonNull RealmField<Model, V> field, @NonNull V[] values) {
+    public final <V> RealmTypeSafeQuery<Model> in(@NonNull RealmField<Model, V> field, V... values) {
         return this.in(field, Arrays.asList(values));
     }
 
