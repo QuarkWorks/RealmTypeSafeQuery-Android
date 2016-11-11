@@ -26,11 +26,15 @@ public class TestRecord implements RealmModel {
     @Nullable
     public Boolean booleanField;
 
+    boolean boolValue;
+
     @Nullable
     public byte[] byteArrayField;
 
     @Nullable
     public Byte byteField;
+
+    public byte byteValue;
 
     @Nullable
     public Date dateField;
@@ -38,17 +42,27 @@ public class TestRecord implements RealmModel {
     @Nullable
     public Double doubleField;
 
+    double doubleValue;
+
     @Nullable
     public Float floatField;
+
+    float floatValue;
 
     @Nullable
     public Integer integerField;
 
+    public int intValue;
+
     @Nullable
     public Long longField;
 
+    public long longValue;
+
     @Nullable
     public Short shortField;
+
+    public short shortValue;
 
     @Nullable
     public String stringField;

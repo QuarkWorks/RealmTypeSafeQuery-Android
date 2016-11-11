@@ -35,8 +35,6 @@ class Maps {
     public static final ClassName realmtoonerelationship       = ClassName.get("com.quarkworks.android.realmtypesafequery.relationships", "RealmToOneRelationship")    ;
     public static final ClassName realmtomanyrelationship      = ClassName.get("com.quarkworks.android.realmtypesafequery.relationships", "RealmToManyRelationship")   ;
 
-
-
     static {
         BaseMap = new HashMap<>();
 
@@ -51,6 +49,14 @@ class Maps {
         BaseMap.put("byte[]",             realmbytearrayfield );
         BaseMap.put("java.util.Date",     realmdatefield      );
 
+        BaseMap.put("boolean",            realmbooleanfield   );
+        BaseMap.put("byte",               realmbytefield      );
+        BaseMap.put("short",              realmshortfield     );
+        BaseMap.put("int",                realmintegerfield   );
+        BaseMap.put("long",               realmlongfield      );
+        BaseMap.put("float",              realmfloatfield     );
+        BaseMap.put("double",             realmdoublefield    );
+
 
         IndexMap = new HashMap<>();
 
@@ -62,7 +68,4 @@ class Maps {
         IndexMap.put(  realmstringfield   , realmindexedstringfield  );
         IndexMap.put(  realmdatefield     , realmindexeddatefield    );
     }
-
-
-
 }
