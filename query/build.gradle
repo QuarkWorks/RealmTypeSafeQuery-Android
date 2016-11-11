@@ -6,7 +6,7 @@ group='com.github.quarkworks' // jitpack.io
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    buildToolsVersion "24.0.3"
 
     defaultConfig {
         minSdkVersion 9
@@ -27,7 +27,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-annotations:24.1.1'
+    compile 'com.android.support:support-annotations:25.0.0'
     androidTestProvided project(':annotationprocessor')
     androidTestCompile 'com.android.support.test:runner:0.5'
 
