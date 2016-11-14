@@ -19,6 +19,7 @@ import java.util.Date;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
+
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static org.junit.Assert.*;
 
@@ -31,7 +32,8 @@ public class BaseTest {
 
     @BeforeClass
     public static void setUpClass() {
-        config = new RealmConfiguration.Builder(getTargetContext()).deleteRealmIfMigrationNeeded().build();
+        Realm.init(getTargetContext());
+
     }
 
     @AfterClass
@@ -41,6 +43,7 @@ public class BaseTest {
 
     @Before
     public void setUp() {
+        config = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
         Realm.setDefaultConfiguration(config);
         defaultInstance = Realm.getDefaultInstance();
         defaultInstance.beginTransaction();
@@ -63,7 +66,6 @@ public class BaseTest {
             record.requiredField = String.valueOf(i);
         }
         defaultInstance.commitTransaction();
-
     }
 
     @After
