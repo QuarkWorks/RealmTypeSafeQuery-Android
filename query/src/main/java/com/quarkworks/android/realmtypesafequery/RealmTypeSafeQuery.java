@@ -404,21 +404,21 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
         Aggregate Functions
      */
 
-    public double sum(@NonNull RealmField<Model, Number> field) {
+    public double sum(@NonNull RealmField<Model, ? extends Number> field) {
         return this.realmQuery.sum(field.getKeyPath()).doubleValue();
     }
 
-    public double average(@NonNull RealmField<Model, Number> field) {
+    public double average(@NonNull RealmField<Model, ? extends Number> field) {
         return this.realmQuery.average(field.getKeyPath());
     }
 
     @Nullable
-    public Number min(@NonNull RealmField<Model, Number> field) {
+    public Number min(@NonNull RealmField<Model, ? extends Number> field) {
         return this.realmQuery.min(field.getKeyPath());
     }
 
     @Nullable
-    public Number max(@NonNull RealmField<Model, Number> field) {
+    public Number max(@NonNull RealmField<Model, ? extends Number> field) {
         return this.realmQuery.max(field.getKeyPath());
     }
 
