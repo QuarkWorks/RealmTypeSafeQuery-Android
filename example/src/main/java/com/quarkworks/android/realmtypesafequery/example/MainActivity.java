@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 public void execute(Realm realm) {
                     realm.deleteAll();
                     for (int i = 0; i < 10; i++) {
-                        TestRecord record = realm.createObject(TestRecord.class);
+                        TestRecord record = realm.createObject(TestRecord.class,  String.valueOf(i));
                         record.booleanField = i % 2 == 0;
                         record.byteArrayField = new byte[]{(byte) i};
                         record.byteField = (byte) i;
@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
                         record.stringField = i % 3 == 0 ? null : String.valueOf(i);
                         record.ignoredField = new Object();
                         record.indexedField = "indexed value: " + i;
-                        record.primaryKey = String.valueOf(i);
                         record.requiredField = String.valueOf(i);
                     }
                 }
