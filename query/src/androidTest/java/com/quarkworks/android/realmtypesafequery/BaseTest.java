@@ -1,10 +1,11 @@
 package com.quarkworks.android.realmtypesafequery;
 
 
+import android.annotation.SuppressLint;
 import android.support.test.runner.AndroidJUnit4;
 
 
-import com.quarkworks.android.realmtypesafequery.generated.TestRecordFields;
+import com.quarkworks.android.realmtypesafequery.generated.BaseTestRecordFields;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -28,23 +29,13 @@ import static org.junit.Assert.*;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BaseTest {
 
-    private static RealmConfiguration config;
-    private Realm defaultInstance;
+    @SuppressLint("StaticFieldLeak")
+    private static Realm defaultInstance;
 
     @BeforeClass
     public static void setUpClass() {
         Realm.init(getTargetContext());
-
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-
-    @Before
-    public void setUp() {
-        config = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
+        RealmConfiguration config = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
         Realm.setDefaultConfiguration(config);
         defaultInstance = Realm.getDefaultInstance();
         defaultInstance.beginTransaction();
@@ -66,12 +57,21 @@ public class BaseTest {
             record.requiredField = String.valueOf(i);
         }
         defaultInstance.commitTransaction();
+
     }
 
-    @After
-    public void tearDown() {
+    @AfterClass
+    public static void tearDownClass() {
+        delete_Data();
         defaultInstance.close();
+        defaultInstance = null;
     }
+
+    public static void delete_Data()
+    {
+        defaultInstance.deleteAll();
+    }
+
 
     @Test
     public void _01_test() {
@@ -80,7 +80,7 @@ public class BaseTest {
 
     @Test
     public void _02_test() {
-        BaseTestRecord t = RealmTypeSafeQuery.where(defaultInstance, BaseTestRecord.class).equalTo(TestRecordFields.STRING_FIELD, "1").findFirst();
+        BaseTestRecord t = RealmTypeSafeQuery.where(defaultInstance, BaseTestRecord.class).equalTo(BaseTestRecordFields.STRING_FIELD, "1").findFirst();
         assertNotEquals(null, t);
         assertEquals("1", t.stringField);
     }
@@ -88,7 +88,7 @@ public class BaseTest {
     @Test
     public void _03_test() {
 
-        BaseTestRecord t = RealmTypeSafeQuery.where(defaultInstance, BaseTestRecord.class).equalTo(TestRecordFields.STRING_FIELD, null).findFirst();
+        BaseTestRecord t = RealmTypeSafeQuery.where(defaultInstance, BaseTestRecord.class).equalTo(BaseTestRecordFields.STRING_FIELD, null).findFirst();
         assertEquals(null, t.stringField);
     }
 

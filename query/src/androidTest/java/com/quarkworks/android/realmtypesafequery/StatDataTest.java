@@ -31,7 +31,7 @@ public class StatDataTest {
     private static Realm defaultInstance;
 
     @BeforeClass
-    public static void A() {
+    public static void setUpClass() {
         Realm.init(getTargetContext());
         RealmConfiguration config =
                 new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
@@ -44,16 +44,13 @@ public class StatDataTest {
     }
 
     @AfterClass
-    public static void B() {
+    public static void tearDownClass() {
         delete_Data();
         defaultInstance.close();
         defaultInstance = null;
     }
 
 
-
-    public StatDataTest() {
-    }
 
 
     public static void init_Data()
