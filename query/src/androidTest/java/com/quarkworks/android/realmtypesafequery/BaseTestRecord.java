@@ -20,7 +20,7 @@ import io.realm.annotations.Required;
 @RealmClass
 @GenerateRealmFieldNames
 @GenerateRealmFields
-public class TestRecord implements RealmModel {
+public class BaseTestRecord implements RealmModel {
 
     @Nullable
     public Boolean booleanField;
@@ -65,8 +65,8 @@ public class TestRecord implements RealmModel {
     public String requiredField = RealmDefaultValues.STRING;
 
     @Nullable
-    public TestRecord parent = null;
+    public BaseTestRecord parent = null;
 
     @NonNull
-    public RealmList<TestRecord> children = new RealmList<>();
+    public RealmList<BaseTestRecord> children = new RealmList<>();
 }

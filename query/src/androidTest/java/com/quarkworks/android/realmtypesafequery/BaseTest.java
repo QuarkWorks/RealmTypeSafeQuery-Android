@@ -3,6 +3,7 @@ package com.quarkworks.android.realmtypesafequery;
 
 import android.support.test.runner.AndroidJUnit4;
 
+
 import com.quarkworks.android.realmtypesafequery.generated.TestRecordFields;
 
 import org.junit.After;
@@ -49,7 +50,7 @@ public class BaseTest {
         defaultInstance.beginTransaction();
         defaultInstance.deleteAll();
         for (int i = 0; i < 10; i++) {
-            TestRecord record = defaultInstance.createObject(TestRecord.class);
+            BaseTestRecord record = defaultInstance.createObject(BaseTestRecord.class, String.valueOf(i));
             record.booleanField = i % 2 == 0;
             record.byteArrayField = new byte[]{(byte) i};
             record.byteField = (byte) i;
@@ -62,7 +63,6 @@ public class BaseTest {
             record.stringField = i % 3 == 0 ? null : String.valueOf(i);
             record.ignoredField = new Object();
             record.indexedField = "indexed value: " + i;
-            record.primaryKey = String.valueOf(i);
             record.requiredField = String.valueOf(i);
         }
         defaultInstance.commitTransaction();
@@ -75,12 +75,12 @@ public class BaseTest {
 
     @Test
     public void _01_test() {
-        assertEquals(10, RealmTypeSafeQuery.where(defaultInstance, TestRecord.class).count());
+        assertEquals(10, RealmTypeSafeQuery.where(defaultInstance, BaseTestRecord.class).count());
     }
 
     @Test
     public void _02_test() {
-        TestRecord t = RealmTypeSafeQuery.where(defaultInstance, TestRecord.class).equalTo(TestRecordFields.STRING_FIELD, "1").findFirst();
+        BaseTestRecord t = RealmTypeSafeQuery.where(defaultInstance, BaseTestRecord.class).equalTo(TestRecordFields.STRING_FIELD, "1").findFirst();
         assertNotEquals(null, t);
         assertEquals("1", t.stringField);
     }
@@ -88,20 +88,20 @@ public class BaseTest {
     @Test
     public void _03_test() {
 
-        TestRecord t = RealmTypeSafeQuery.where(defaultInstance, TestRecord.class).equalTo(TestRecordFields.STRING_FIELD, null).findFirst();
+        BaseTestRecord t = RealmTypeSafeQuery.where(defaultInstance, BaseTestRecord.class).equalTo(TestRecordFields.STRING_FIELD, null).findFirst();
         assertEquals(null, t.stringField);
     }
 
     @Test
     public void _04_test() {
         // don't understand this
-        //RealmTypeSafeQuery.where(TestRecord.class).isNull(TestRecordFields.STRING_FIELD).findAll().toString();
+        //RealmTypeSafeQuery.where(BaseTestRecord.class).isNull(TestRecordFields.STRING_FIELD).findAll().toString();
     }
 
     @Test
     public void _05_test() {
         // don't understand this
-        //RealmTypeSafeQuery.where(TestRecord.class).isNotNull(TestRecordFields.STRING_FIELD).findAll().toString();
+        //RealmTypeSafeQuery.where(BaseTestRecord.class).isNotNull(TestRecordFields.STRING_FIELD).findAll().toString();
     }
 
 

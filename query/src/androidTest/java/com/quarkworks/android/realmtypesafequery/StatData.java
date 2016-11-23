@@ -60,8 +60,8 @@ public class StatData implements RealmModel {
         AVG_DATA = DATA_.length - 2;
     }
 
-    @PrimaryKey
-    public String primaryKey;
+//    @PrimaryKey
+//    public String primaryKey;
 
     public Integer integerField;
     public Float floatField;
