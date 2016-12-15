@@ -20,10 +20,12 @@ import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.RealmResults;
 
 
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -62,14 +64,16 @@ public class BaseTest {
 
     @AfterClass
     public static void tearDownClass() {
-        delete_Data();
+        //delete_Data();
         defaultInstance.close();
         defaultInstance = null;
     }
 
     public static void delete_Data()
     {
+        defaultInstance.beginTransaction();
         defaultInstance.deleteAll();
+        defaultInstance.commitTransaction();
     }
 
 
@@ -94,15 +98,37 @@ public class BaseTest {
 
     @Test
     public void _04_test() {
-        // don't understand this
-        //RealmTypeSafeQuery.where(BaseTestRecord.class).isNull(TestRecordFields.STRING_FIELD).findAll().toString();
+
+        RealmResults<BaseTestRecord> r  = RealmTypeSafeQuery.where(BaseTestRecord.class).isNull(BaseTestRecordFields.STRING_FIELD).findAll();
+        r.load();
+        assertThat(r.size(), is(4));
+
     }
 
     @Test
     public void _05_test() {
-        // don't understand this
-        //RealmTypeSafeQuery.where(BaseTestRecord.class).isNotNull(TestRecordFields.STRING_FIELD).findAll().toString();
+
+        RealmResults<BaseTestRecord> r  = RealmTypeSafeQuery.where(BaseTestRecord.class).isNotNull(BaseTestRecordFields.STRING_FIELD).findAll();
+        r.load();
+        assertThat(r.size(), is(6));
     }
 
-
+    private Object [] extract(BaseTestRecord in)
+    {
+        return new Object[] {
+        in.booleanField ,
+        in.byteArrayField ,
+        in.byteField ,
+        in.dateField ,
+        in.doubleField,
+        in.floatField,
+        in.integerField,
+        in.longField,
+        in.shortField,
+        in.stringField ,
+        in.ignoredField,
+        in.indexedField,
+        in.requiredField ,
+        };
+    }
 }

@@ -1,20 +1,19 @@
 package com.quarkworks.android.realmtypesafequery;
 
-import android.support.annotation.Nullable;
-
 import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFieldNames;
 import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFields;
 
 import io.realm.RealmModel;
-import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.RealmClass;
 
 @RealmClass
 @GenerateRealmFieldNames
 @GenerateRealmFields
 public class StatData implements RealmModel {
-    static final int SUM_DATA;
-    static final int AVG_DATA;
+    static final int SUM_DATA_index;
+    static final int AVG_DATA_index;
+    static final int MAX_DATA_index;
+    static final int MIN_DATA_index;
     static Object[][] DATA_ = new Object[][]
             {
                     {33, 0.33f},
@@ -51,13 +50,17 @@ public class StatData implements RealmModel {
                     {1025, 10.25f},
                     {1089, 10.89f},
 
-                    {395.666666666667d, 3.95666666666667d},
-                    {13057, 130.57f}
+                    {395, 3.95666666666667d},
+                    {13057, 130.57f},
+                    {1089, 10.89f},
+                    {33, 0.33f},
             };
 
     static {
-        SUM_DATA = DATA_.length - 1;
-        AVG_DATA = DATA_.length - 2;
+        AVG_DATA_index = DATA_.length - 4;
+        SUM_DATA_index = DATA_.length - 3;
+        MAX_DATA_index = DATA_.length - 2;
+        MIN_DATA_index = DATA_.length - 1;
     }
 
 //    @PrimaryKey

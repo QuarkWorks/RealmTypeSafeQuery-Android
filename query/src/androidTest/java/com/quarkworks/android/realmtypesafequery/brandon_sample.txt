@@ -1,0 +1,20 @@
+class Event {
+    Float price
+}
+
+
+class Place {
+    String location
+    Set<Event> events
+}
+
+
+RTSQ.where(Place.class).equalTo(PlaceFields.location, "Columbia")
+    .lessThanOrEqualTo(PlaceFields.events.link(EventFields.price), 5.00)
+    .findAll()
+
+//I think this is the syntex
+//
+//[4:05]
+//Ignore the Non realm plumbing on the Event and Place Classes,
+//also Set == RealmList for this example

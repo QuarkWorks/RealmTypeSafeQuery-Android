@@ -169,8 +169,8 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
         return this.in(field, Arrays.asList(values));
     }
 
-    @NonNull 
-	public <V> RealmTypeSafeQuery<Model> in(@NonNull RealmField<Model, V> field, @NonNull List<V> values) {
+    @NonNull
+    public <V> RealmTypeSafeQuery<Model> in(@NonNull RealmField<Model, V> field, @NonNull List<V> values) {
         // taken from io.realm.RealmQuery.in()
         if (values.size() == 0) {return this;}
 
@@ -367,26 +367,26 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
         Empty
      */
 
-    @NonNull 
-	public RealmTypeSafeQuery<Model> isEmpty(@NonNull RealmEmptyableField<Model, ?> field) {
+    @NonNull
+    public RealmTypeSafeQuery<Model> isEmpty(@NonNull RealmEmptyableField<Model, ?> field) {
         this.realmQuery.isEmpty(field.getKeyPath());
         return this;
     }
 
-    @NonNull 
-	public RealmTypeSafeQuery<Model> isNotEmpty(@NonNull RealmEmptyableField<Model, ?> field) {
+    @NonNull
+    public RealmTypeSafeQuery<Model> isNotEmpty(@NonNull RealmEmptyableField<Model, ?> field) {
         this.realmQuery.isNotEmpty(field.getKeyPath());
         return this;
     }
 
-    @NonNull 
-	public RealmTypeSafeQuery<Model> isEmpty(@NonNull RealmToManyRelationship<Model, ?> field) {
+    @NonNull
+    public RealmTypeSafeQuery<Model> isEmpty(@NonNull RealmToManyRelationship<Model, ?> field) {
         this.realmQuery.isEmpty(field.getKeyPath());
         return this;
     }
 
-    @NonNull 
-	public RealmTypeSafeQuery<Model> isNotEmpty(@NonNull RealmToManyRelationship<Model, ?> field) {
+    @NonNull
+    public RealmTypeSafeQuery<Model> isNotEmpty(@NonNull RealmToManyRelationship<Model, ?> field) {
         this.realmQuery.isNotEmpty(field.getKeyPath());
         return this;
     }
