@@ -10,11 +10,18 @@ import io.realm.annotations.RealmClass;
 @GenerateRealmFieldNames
 @GenerateRealmFields
 public class StatData implements RealmModel {
-    static final int SUM_DATA_index;
-    static final int AVG_DATA_index;
-    static final int MAX_DATA_index;
-    static final int MIN_DATA_index;
-    static Object[][] DATA_ = new Object[][]
+    static final int SUM_DATA_INDEX;
+    static final int AVG_DATA_INDEX;
+    static final int MAX_DATA_INDEX;
+    static final int MIN_DATA_INDEX;
+    static Object [] SUM_DATA = {395, 3.95666666666667d};
+    static Object [] AVG_DATA = {13057, 130.57f};
+    static Object [] MAX_DATA = {1089, 10.89f};
+    static Object [] MIN_DATA = {33, 0.33f};
+
+
+
+    static Object[][] DATA = new Object[][]
             {
                     {33, 0.33f},
                     {35, 0.35f},
@@ -57,10 +64,10 @@ public class StatData implements RealmModel {
             };
 
     static {
-        AVG_DATA_index = DATA_.length - 4;
-        SUM_DATA_index = DATA_.length - 3;
-        MAX_DATA_index = DATA_.length - 2;
-        MIN_DATA_index = DATA_.length - 1;
+        AVG_DATA_INDEX = DATA.length - 4;
+        SUM_DATA_INDEX = DATA.length - 3;
+        MAX_DATA_INDEX = DATA.length - 2;
+        MIN_DATA_INDEX = DATA.length - 1;
     }
 
 //    @PrimaryKey
