@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.quarkworks.android.realmtypesafequery.generated.CatFields;
-import com.quarkworks.android.realmtypesafequery.generated.PersonFieldNames;
 import com.quarkworks.android.realmtypesafequery.generated.PersonFields;
 
 import org.junit.AfterClass;
@@ -18,8 +17,8 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
 import static android.support.test.InstrumentationRegistry.getTargetContext;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 @RunWith(AndroidJUnit4.class)
 public class IntroExampleTest {
@@ -153,8 +152,8 @@ public class IntroExampleTest {
             }
         });
         // Find the first person (no query conditions) and read a field
-        final Person person =
-                RealmTypeSafeQuery.where(defaultInstance, Person.class).findFirst();
+        final Person person = RealmTypeSafeQuery.where(defaultInstance, Person.class).findFirst();
+        assert person != null;
         Runnable[] cmds = {
                 new Runnable() {
                     public void run() {
@@ -163,13 +162,13 @@ public class IntroExampleTest {
                 },
                 new Runnable() {
                     public void run() {
-                        //noinspection ConstantConditions
+
                         assertEquals(person.getName(), "Young Person");
                     }
                 },
                 new Runnable() {
                     public void run() {
-                        //noinspection ConstantConditions
+
                         assertEquals(person.getAge(), 14);
                     }
                 }

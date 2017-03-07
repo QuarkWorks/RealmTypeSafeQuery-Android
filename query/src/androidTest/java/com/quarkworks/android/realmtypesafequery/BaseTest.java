@@ -4,12 +4,9 @@ package com.quarkworks.android.realmtypesafequery;
 import android.annotation.SuppressLint;
 import android.support.test.runner.AndroidJUnit4;
 
-
 import com.quarkworks.android.realmtypesafequery.generated.BaseTestRecordFields;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -22,10 +19,11 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
-
 import static android.support.test.InstrumentationRegistry.getTargetContext;
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

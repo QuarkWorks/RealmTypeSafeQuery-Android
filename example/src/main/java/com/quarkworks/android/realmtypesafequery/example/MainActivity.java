@@ -8,8 +8,6 @@ import android.util.Log;
 import com.quarkworks.android.realmtypesafequery.RealmTypeSafeQuery;
 import com.quarkworks.android.realmtypesafequery.generated.TestRecordFieldNames;
 import com.quarkworks.android.realmtypesafequery.generated.TestRecordFields;
-import com.quarkworks.android.realmtypesafequery.relationships.RealmToManyRelationship;
-import com.quarkworks.android.realmtypesafequery.relationships.RealmToOneRelationship;
 
 import java.util.Date;
 

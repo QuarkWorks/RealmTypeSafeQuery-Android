@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'realm-android'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    compileSdkVersion sdk_version
+    buildToolsVersion build_tools_version
 
     defaultConfig {
         applicationId "com.quarkworks.android.realmtypesafequery.example"
         minSdkVersion 19
-        targetSdkVersion 24
+        targetSdkVersion sdk_version
         versionCode 1
         versionName "1.0"
     }
@@ -25,7 +25,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.1.1'
+    compile "com.android.support:appcompat-v7:$support_library_version"
     compile project(':query')
     provided project(':annotationprocessor')
 }

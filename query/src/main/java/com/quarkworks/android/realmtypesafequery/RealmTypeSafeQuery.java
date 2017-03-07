@@ -4,19 +4,17 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Pair;
 
+import com.quarkworks.android.realmtypesafequery.fields.RealmDateField;
 import com.quarkworks.android.realmtypesafequery.fields.RealmStringField;
 import com.quarkworks.android.realmtypesafequery.interfaces.RealmComparableField;
 import com.quarkworks.android.realmtypesafequery.interfaces.RealmEmptyableField;
-import com.quarkworks.android.realmtypesafequery.interfaces.RealmIndexedField;
-import com.quarkworks.android.realmtypesafequery.fields.RealmDateField;
 import com.quarkworks.android.realmtypesafequery.interfaces.RealmField;
+import com.quarkworks.android.realmtypesafequery.interfaces.RealmIndexedField;
 import com.quarkworks.android.realmtypesafequery.interfaces.SortableRealmField;
 import com.quarkworks.android.realmtypesafequery.relationships.RealmToManyRelationship;
 import com.quarkworks.android.realmtypesafequery.relationships.RealmToOneRelationship;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;

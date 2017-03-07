@@ -2,8 +2,8 @@ package com.quarkworks.android.realmtypesafequery;
 
 import android.support.annotation.NonNull;
 
-import com.quarkworks.android.realmtypesafequery.interfaces.RealmIndexedField;
 import com.quarkworks.android.realmtypesafequery.interfaces.RealmField;
+import com.quarkworks.android.realmtypesafequery.interfaces.RealmIndexedField;
 import com.quarkworks.android.realmtypesafequery.interfaces.SortableRealmField;
 
 import io.realm.RealmModel;
