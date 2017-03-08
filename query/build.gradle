@@ -28,9 +28,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     provided "com.android.support:support-annotations:$support_library_version"
     provided "io.realm:realm-android-library:$realm_version"
-    androidTestProvided project(':annotationprocessor')
-    androidTestCompile 'com.android.support.test:runner:0.5'
-
 }
 
 // build a jar with source files

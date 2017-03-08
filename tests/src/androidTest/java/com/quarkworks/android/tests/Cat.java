@@ -1,4 +1,4 @@
-package com.quarkworks.android.realmtypesafequery;
+package com.quarkworks.android.tests;
 // from intro examples realm-java
 
 import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFieldNames;

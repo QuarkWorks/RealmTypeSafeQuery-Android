@@ -1,9 +1,10 @@
-package com.quarkworks.android.realmtypesafequery;
+package com.quarkworks.android.tests;
 
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.quarkworks.android.realmtypesafequery.RealmDefaultValues;
 import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFieldNames;
 import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFields;
 
@@ -17,6 +18,7 @@ import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.RealmClass;
 import io.realm.annotations.Required;
 
+@SuppressWarnings("WeakerAccess")
 @RealmClass
 @GenerateRealmFieldNames
 @GenerateRealmFields

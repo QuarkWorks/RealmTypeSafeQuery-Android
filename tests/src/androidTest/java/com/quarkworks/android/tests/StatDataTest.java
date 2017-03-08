@@ -1,4 +1,4 @@
-package com.quarkworks.android.realmtypesafequery;
+package com.quarkworks.android.tests;
 
 import android.annotation.SuppressLint;
 import android.support.test.runner.AndroidJUnit4;
@@ -16,6 +16,8 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
 import android.support.test.InstrumentationRegistry;
+
+import com.quarkworks.android.realmtypesafequery.RealmTypeSafeQuery;
 import com.quarkworks.android.realmtypesafequery.generated.StatDataFields;
 import org.junit.Assert;
 
@@ -98,5 +100,4 @@ public class StatDataTest {
         //Assert.assertEquals(min, (StatData.DATA[StatData.MIN_DATA_INDEX][0]));
         Assert.assertEquals(min, StatData.MIN_DATA[0]);
     }
-
 }

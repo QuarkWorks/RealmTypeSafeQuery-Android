@@ -1,9 +1,10 @@
-package com.quarkworks.android.realmtypesafequery;
+package com.quarkworks.android.tests;
 
 
 import android.annotation.SuppressLint;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.quarkworks.android.realmtypesafequery.RealmTypeSafeQuery;
 import com.quarkworks.android.realmtypesafequery.generated.BaseTestRecordFields;
 
 import org.junit.AfterClass;

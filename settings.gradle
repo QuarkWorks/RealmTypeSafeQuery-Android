@@ -1,1 +1,1 @@
-include ':example', ':annotations', ':annotationprocessor', ':query'
+include ':annotations', ':annotationprocessor', ':query', ':tests'

@@ -1,9 +1,10 @@
-package com.quarkworks.android.realmtypesafequery;
+package com.quarkworks.android.tests;
 // from intro examples realm-java
 
 import android.annotation.SuppressLint;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.quarkworks.android.realmtypesafequery.RealmTypeSafeQuery;
 import com.quarkworks.android.realmtypesafequery.generated.CatFields;
 import com.quarkworks.android.realmtypesafequery.generated.PersonFields;
 
@@ -207,8 +208,4 @@ public class IntroExampleTest {
         checkSucceeds(cmds);
         defaultInstance.executeTransaction(delete_all);
     }
-
-
-
-
 }

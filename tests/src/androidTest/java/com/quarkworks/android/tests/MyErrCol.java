@@ -1,4 +1,4 @@
-package com.quarkworks.android.realmtypesafequery;
+package com.quarkworks.android.tests;
 
 import org.junit.rules.ErrorCollector;
 
