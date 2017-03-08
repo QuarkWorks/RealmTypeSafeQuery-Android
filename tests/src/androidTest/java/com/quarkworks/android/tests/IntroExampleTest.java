@@ -85,14 +85,14 @@ public class IntroExampleTest {
                 new Runnable() {
                     public void run() {
                         assertEquals(
-                                RealmTypeSafeQuery.where(Cat.class).count(), 2
+                                RealmTypeSafeQuery.with(defaultInstance).where(Cat.class).count(), 2
                         );
                     }
                 },
                 new Runnable() {
                     public void run() {
                         assertEquals(
-                                RealmTypeSafeQuery.where(Person.class)
+                                RealmTypeSafeQuery.with(defaultInstance).where(Person.class)
                                         .equalTo(PersonFields.CATS.link(CatFields.NAME), "Tiger")
                                         .count(), 1
                         );
@@ -124,12 +124,13 @@ public class IntroExampleTest {
         Runnable[] cmds = {
         new Runnable() {
             public void run() {
-                assertEquals(RealmTypeSafeQuery.where(Person.class).count(), 2);
+                assertEquals(RealmTypeSafeQuery.with(defaultInstance).where(Person.class).count(), 2);
             }
         },
         new Runnable() {
             public void run() {
-                assertEquals(RealmTypeSafeQuery.where(Person.class).equalTo(PersonFields.AGE, 99).findAll().size(), 1);
+                assertEquals(RealmTypeSafeQuery.with(defaultInstance)
+                        .where(Person.class).equalTo(PersonFields.AGE, 99).findAll().size(), 1);
             }
         }};
         checkSucceeds(cmds);
@@ -153,7 +154,7 @@ public class IntroExampleTest {
             }
         });
         // Find the first person (no query conditions) and read a field
-        final Person person = RealmTypeSafeQuery.where(defaultInstance, Person.class).findFirst();
+        final Person person = RealmTypeSafeQuery.with(defaultInstance).where(Person.class).findFirst();
         assert person != null;
         Runnable[] cmds = {
                 new Runnable() {

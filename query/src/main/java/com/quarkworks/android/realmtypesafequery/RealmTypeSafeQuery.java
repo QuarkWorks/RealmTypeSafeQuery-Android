@@ -27,30 +27,37 @@ import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class RealmTypeSafeQuery<Model extends RealmModel> {
 
     /*
         Static Constructors
      */
 
-    @NonNull
-    public static <M extends RealmModel> RealmTypeSafeQuery<M> create(@NonNull RealmQuery<M> realmQuery) {
-        return new RealmTypeSafeQuery<>(realmQuery);
+    public static RealmTypeSafeQuery1 with(@NonNull Realm realm) {
+        return new RealmTypeSafeQuery1(realm);
+    }
+
+    /*
+        Intermediary builder class
+     */
+
+    public static final class RealmTypeSafeQuery1 {
+        @NonNull
+        private final Realm realm;
+
+        private RealmTypeSafeQuery1(@NonNull Realm realm) {
+            this.realm = realm;
+        }
+
+        public <M extends RealmModel> RealmTypeSafeQuery<M> where(@NonNull Class<M> clazz) {
+            return new RealmTypeSafeQuery<>(clazz, realm);
+        }
     }
 
     @NonNull
-    public static <M extends RealmModel> RealmTypeSafeQuery<M> where(@NonNull Class<M> clazz) {
-        return new RealmTypeSafeQuery<>(clazz);
-    }
-
-    @NonNull
-    public static <M extends RealmModel> RealmTypeSafeQuery<M> where(@NonNull Realm realm, @NonNull Class<M> clazz) {
-        return new RealmTypeSafeQuery<>(realm, clazz);
-    }
-
-    @NonNull
-    public static <M extends RealmModel> RealmTypeSafeQuery<M> where(@NonNull RealmCollection<M> realmCollection) {
-        return new RealmTypeSafeQuery<>(realmCollection);
+    public static <M extends RealmModel> RealmTypeSafeQuery<M> where(@NonNull Class<M> clazz, @NonNull Realm realm) {
+        return new RealmTypeSafeQuery<>(clazz, realm);
     }
 
     /*
@@ -59,29 +66,33 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
 
     @Nullable
     public static <M extends RealmModel, V> M findFirst(@NonNull Realm realm, @NonNull RealmField<M, V> field, @Nullable V value) {
-        return RealmTypeSafeQuery.where(realm, field.getModelClass()).equalTo(field, value).findFirst();
+        return RealmTypeSafeQuery.with(realm).where(field.getModelClass())
+                .equalTo(field, value).findFirst();
     }
 
     @Nullable
     public static <M extends RealmModel, V> M findFirst(@NonNull Realm realm, @NonNull SortableRealmField<M, V> field, @Nullable V value, @NonNull Sort sort) {
-        return RealmTypeSafeQuery.where(realm, field.getModelClass()).equalTo(field, value).sort(field, sort).findFirst();
+        return RealmTypeSafeQuery.with(realm).where(field.getModelClass())
+                .equalTo(field, value).sort(field, sort).findFirst();
     }
 
     @NonNull
     public static <M extends RealmModel, V> RealmResults<M> findAll(@NonNull Realm realm, @NonNull RealmField<M, V> field, @Nullable V value) {
-        return new RealmTypeSafeQuery<>(realm, field.getModelClass()).equalTo(field, value).findAll();
+        return new RealmTypeSafeQuery<>(field.getModelClass(), realm)
+                .equalTo(field, value).findAll();
     }
 
     @NonNull
     public static <M extends RealmModel, V> RealmResults<M> findAll(@NonNull Realm realm, @NonNull SortableRealmField<M, V> field, @Nullable V value, @NonNull Sort sort) {
-        return new RealmTypeSafeQuery<>(realm, field.getModelClass()).equalTo(field, value).sort(field, sort).findAll();
+        return new RealmTypeSafeQuery<>(field.getModelClass(), realm)
+                .equalTo(field, value).sort(field, sort).findAll();
     }
 
     @NonNull
-    final RealmQuery<Model> realmQuery;
+    private final RealmQuery<Model> realmQuery;
 
     @NonNull
-    final List<Pair<String, Sort>> sortOrders = new LinkedList<>();
+    private final List<Pair<String, Sort>> sortParams = new LinkedList<>();
 
     /*
         Constructors
@@ -91,21 +102,12 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
         this.realmQuery = realmQuery;
     }
 
-    public RealmTypeSafeQuery(@NonNull Class<Model> modelClass) {
-        Realm realm = Realm.getDefaultInstance();
-        this.realmQuery = realm.where(modelClass);
-        realm.close();
-        if (realm.isClosed()) {
-            throw new IllegalStateException("Using global realm that is not already opened");
-        }
-    }
-
-    public RealmTypeSafeQuery(@NonNull Realm realm, @NonNull Class<Model> modelClass) {
-        this.realmQuery = realm.where(modelClass);
+    public RealmTypeSafeQuery(@NonNull Class<Model> modelClass, @NonNull Realm realm) {
+        realmQuery = realm.where(modelClass);
     }
 
     public RealmTypeSafeQuery(@NonNull RealmCollection<Model> realmCollection) {
-        this.realmQuery = realmCollection.where();
+        realmQuery = realmCollection.where();
     }
 
     @NonNull
@@ -114,7 +116,7 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
     }
 
     public boolean isValid() {
-        return this.realmQuery.isValid();
+        return realmQuery.isValid();
     }
 
     /*
@@ -123,25 +125,25 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
 
     @NonNull
     public RealmTypeSafeQuery<Model> isNull(@NonNull RealmField<Model, ?> field) {
-        field.isNull(this.realmQuery);
+        field.isNull(realmQuery);
         return this;
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> isNotNull(@NonNull RealmField<Model, ?> field) {
-        field.isNotNull(this.realmQuery);
+        field.isNotNull(realmQuery);
         return this;
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> isNull(@NonNull RealmToOneRelationship<Model, ?> field) {
-        this.realmQuery.isNull(field.getKeyPath());
+        realmQuery.isNull(field.getKeyPath());
         return this;
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> isNotNull(@NonNull RealmToOneRelationship<Model, ?> field) {
-        this.realmQuery.isNotNull(field.getKeyPath());
+        realmQuery.isNotNull(field.getKeyPath());
         return this;
     }
 
@@ -151,20 +153,20 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
 
     @NonNull
     public <V> RealmTypeSafeQuery<Model> equalTo(@NonNull RealmField<Model, V> field, @Nullable V value) {
-        field.equalTo(this.realmQuery, value);
+        field.equalTo(realmQuery, value);
         return this;
     }
 
     @NonNull
     public <V> RealmTypeSafeQuery<Model> notEqualTo(@NonNull RealmField<Model, V> field, @Nullable V value) {
-        field.notEqualTo(this.realmQuery, value);
+        field.notEqualTo(realmQuery, value);
         return this;
     }
 
     @SafeVarargs
     @NonNull
     public final <V> RealmTypeSafeQuery<Model> in(@NonNull RealmField<Model, V> field, V... values) {
-        return this.in(field, Arrays.asList(values));
+        return in(field, Arrays.asList(values));
     }
 
     @NonNull
@@ -172,9 +174,9 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
         // taken from io.realm.RealmQuery.in()
         if (values.size() == 0) {return this;}
 
-        this.beginGroup().equalTo(field, values.get(0));
+        beginGroup().equalTo(field, values.get(0));
         for (int i = 1; i < values.size(); i++) {
-            this.or().equalTo(field, values.get(i));
+            or().equalTo(field, values.get(i));
         }
         return endGroup();
     }
@@ -186,88 +188,87 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
     @NonNull
     public RealmTypeSafeQuery<Model> equalTo(@NonNull RealmStringField<Model> field, @Nullable String value, @NonNull Case casing) {
         if (value == null) {
-            return this.isNull(field);
+            return isNull(field);
         }
 
-        this.realmQuery.equalTo(field.getKeyPath(), value, casing);
+        realmQuery.equalTo(field.getKeyPath(), value, casing);
         return this;
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> notEqualTo(@NonNull RealmStringField<Model> field, @Nullable String value, @NonNull Case casing) {
         if (value == null) {
-            return this.isNotNull(field);
+            return isNotNull(field);
         }
 
-        this.realmQuery.notEqualTo(field.getKeyPath(), value, casing);
+        realmQuery.notEqualTo(field.getKeyPath(), value, casing);
         return this;
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> beginsWith(@NonNull RealmStringField<Model> field, @Nullable String value) {
-        return this.beginsWith(field, value, Case.SENSITIVE);
+        return beginsWith(field, value, Case.SENSITIVE);
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> beginsWith(@NonNull RealmStringField<Model> field, @Nullable String value, @NonNull Case casing) {
         if (value == null) {
-            return this.isNull(field);
+            return isNull(field);
         }
 
-        this.realmQuery.beginsWith(field.getKeyPath(), value, casing);
+        realmQuery.beginsWith(field.getKeyPath(), value, casing);
         return this;
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> endsWith(@NonNull RealmStringField<Model> field, @Nullable String value) {
-        return this.endsWith(field, value, Case.SENSITIVE);
+        return endsWith(field, value, Case.SENSITIVE);
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> endsWith(@NonNull RealmStringField<Model> field, @Nullable String value, @NonNull Case casing) {
         if (value == null) {
-            return this.isNull(field);
+            return isNull(field);
         }
 
-
-        this.realmQuery.endsWith(field.getKeyPath(), value, casing);
+        realmQuery.endsWith(field.getKeyPath(), value, casing);
         return this;
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> contains(@NonNull RealmStringField<Model> field, @Nullable String value) {
-        return this.contains(field, value, Case.SENSITIVE);
+        return contains(field, value, Case.SENSITIVE);
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> contains(@NonNull RealmStringField<Model> field, @Nullable String value, @NonNull Case casing) {
         if (value == null) {
-            return this.isNull(field);
+            return isNull(field);
         }
 
-        this.realmQuery.contains(field.getKeyPath(), value, casing);
+        realmQuery.contains(field.getKeyPath(), value, casing);
         return this;
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> contains(@NonNull RealmStringField<Model> field, @Nullable String value, @NonNull String delimiter) {
-        return this.contains(field, value, delimiter, Case.SENSITIVE);
+        return contains(field, value, delimiter, Case.SENSITIVE);
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> contains(@NonNull RealmStringField<Model> field, @Nullable String value, @NonNull String delimiter, @NonNull Case casing) {
         if (value == null) {
-            return this.isNull(field);
+            return isNull(field);
         }
 
-        this.beginGroup();
+        beginGroup();
 
-        this.realmQuery.contains(field.getKeyPath(), delimiter + value + delimiter, casing);
-        this.realmQuery.equalTo(field.getKeyPath(), value, casing);
-        this.realmQuery.beginsWith(field.getKeyPath(), value + delimiter, casing);
-        this.realmQuery.endsWith(field.getKeyPath(), delimiter + value, casing);
+        realmQuery.contains(field.getKeyPath(), delimiter + value + delimiter, casing);
+        realmQuery.equalTo(field.getKeyPath(), value, casing);
+        realmQuery.beginsWith(field.getKeyPath(), value + delimiter, casing);
+        realmQuery.endsWith(field.getKeyPath(), delimiter + value, casing);
 
-        this.endGroup();
+        endGroup();
 
         return this;
     }
@@ -277,27 +278,27 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
      */
 
     public <V> RealmTypeSafeQuery<Model> greaterThan(@NonNull RealmComparableField<Model, V> field, @Nullable V value) {
-        field.greaterThan(this.realmQuery, value);
+        field.greaterThan(realmQuery, value);
         return this;
     }
 
     public <V> RealmTypeSafeQuery<Model> greaterThanOrEqualTo(@NonNull RealmComparableField<Model, V> field, @Nullable V value) {
-        field.greaterThanOrEqualTo(this.realmQuery, value);
+        field.greaterThanOrEqualTo(realmQuery, value);
         return this;
     }
 
     public <V> RealmTypeSafeQuery<Model> lessThan(@NonNull RealmComparableField<Model, V> field, @Nullable V value) {
-        field.lessThan(this.realmQuery, value);
+        field.lessThan(realmQuery, value);
         return this;
     }
 
     public <V> RealmTypeSafeQuery<Model> lessThanOrEqualTo(@NonNull RealmComparableField<Model, V> field, @Nullable V value) {
-        field.lessThanOrEqualTo(this.realmQuery, value);
+        field.lessThanOrEqualTo(realmQuery, value);
         return this;
     }
 
     public <V> RealmTypeSafeQuery<Model> between(@NonNull RealmComparableField<Model, V> field, @Nullable V start, @Nullable V end) {
-        field.between(this.realmQuery, start, end);
+        field.between(realmQuery, start, end);
         return this;
     }
 
@@ -311,21 +312,21 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
 
     @NonNull
     public RealmTypeSafeQuery<Model> group(@NonNull RealmTypeSafeQuery.Group<Model> group) {
-        this.realmQuery.beginGroup();
+        realmQuery.beginGroup();
         group.group(this);
-        this.realmQuery.endGroup();
+        realmQuery.endGroup();
         return this;
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> beginGroup() {
-        this.realmQuery.beginGroup();
+        realmQuery.beginGroup();
         return this;
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> endGroup() {
-        this.realmQuery.endGroup();
+        realmQuery.endGroup();
         return this;
     }
 
@@ -335,13 +336,13 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
 
     @NonNull
     public RealmTypeSafeQuery<Model> or() {
-        this.realmQuery.or();
+        realmQuery.or();
         return this;
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> or(@NonNull Group<Model> group) {
-        this.or().group(group);
+        or().group(group);
         return this;
     }
 
@@ -351,13 +352,13 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
 
     @NonNull
     public RealmTypeSafeQuery<Model> not() {
-        this.realmQuery.not();
+        realmQuery.not();
         return this;
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> not(@NonNull Group<Model> group) {
-        this.not().group(group);
+        not().group(group);
         return this;
     }
 
@@ -367,25 +368,25 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
 
     @NonNull
     public RealmTypeSafeQuery<Model> isEmpty(@NonNull RealmEmptyableField<Model, ?> field) {
-        this.realmQuery.isEmpty(field.getKeyPath());
+        realmQuery.isEmpty(field.getKeyPath());
         return this;
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> isNotEmpty(@NonNull RealmEmptyableField<Model, ?> field) {
-        this.realmQuery.isNotEmpty(field.getKeyPath());
+        realmQuery.isNotEmpty(field.getKeyPath());
         return this;
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> isEmpty(@NonNull RealmToManyRelationship<Model, ?> field) {
-        this.realmQuery.isEmpty(field.getKeyPath());
+        realmQuery.isEmpty(field.getKeyPath());
         return this;
     }
 
     @NonNull
     public RealmTypeSafeQuery<Model> isNotEmpty(@NonNull RealmToManyRelationship<Model, ?> field) {
-        this.realmQuery.isNotEmpty(field.getKeyPath());
+        realmQuery.isNotEmpty(field.getKeyPath());
         return this;
     }
 
@@ -403,31 +404,31 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
      */
 
     public double sum(@NonNull RealmField<Model, ? extends Number> field) {
-        return this.realmQuery.sum(field.getKeyPath()).doubleValue();
+        return realmQuery.sum(field.getKeyPath()).doubleValue();
     }
 
     public double average(@NonNull RealmField<Model, ? extends Number> field) {
-        return this.realmQuery.average(field.getKeyPath());
+        return realmQuery.average(field.getKeyPath());
     }
 
     @Nullable
     public Number min(@NonNull RealmField<Model, ? extends Number> field) {
-        return this.realmQuery.min(field.getKeyPath());
+        return realmQuery.min(field.getKeyPath());
     }
 
     @Nullable
     public Number max(@NonNull RealmField<Model, ? extends Number> field) {
-        return this.realmQuery.max(field.getKeyPath());
+        return realmQuery.max(field.getKeyPath());
     }
 
     @Nullable
     public Date min(@NonNull RealmDateField<Model> field) {
-        return this.realmQuery.minimumDate(field.getKeyPath());
+        return realmQuery.minimumDate(field.getKeyPath());
     }
 
     @Nullable
     public Date max(@NonNull RealmDateField<Model> field) {
-        return this.realmQuery.maximumDate(field.getKeyPath());
+        return realmQuery.maximumDate(field.getKeyPath());
     }
 
     /*
@@ -435,17 +436,17 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
      */
     @NonNull
     public RealmTypeSafeQuery<Model> sort(SortableRealmField<Model, ?> field, Sort sort) {
-        this.sortOrders.add(new Pair<>(field.getKeyPath(), sort));
+        sortParams.add(new Pair<>(field.getKeyPath(), sort));
         return this;
     }
 
     @NonNull
-    public Pair<String[], Sort[]> sortParams() {
-        String[] fieldKeyPaths = new String[this.sortOrders.size()];
-        Sort[] sorts = new Sort[this.sortOrders.size()];
+    public Pair<String[], Sort[]> getSortParams() {
+        String[] fieldKeyPaths = new String[sortParams.size()];
+        Sort[] sorts = new Sort[sortParams.size()];
 
-        for (int i = 0; i < this.sortOrders.size(); i++) {
-            Pair<String, Sort> pair = this.sortOrders.get(i);
+        for (int i = 0; i < sortParams.size(); i++) {
+            Pair<String, Sort> pair = sortParams.get(i);
             fieldKeyPaths[i] = pair.first;
             sorts[i] = pair.second;
         }
@@ -458,36 +459,36 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
      */
 
     public long count() {
-        return this.realmQuery.count();
+        return realmQuery.count();
     }
 
     @NonNull
     public RealmResults<Model> findAll() {
-        Pair<String[], Sort[]> sortParams = this.sortParams();
+        Pair<String[], Sort[]> sortParams = getSortParams();
         if (sortParams.first.length == 0) {
-            return this.realmQuery.findAll();
+            return realmQuery.findAll();
         }
 
-        return this.realmQuery.findAllSorted(sortParams.first, sortParams.second);
+        return realmQuery.findAllSorted(sortParams.first, sortParams.second);
     }
 
     @NonNull
     public RealmResults<Model> findAllAsync() {
-        Pair<String[], Sort[]> sortParams = this.sortParams();
+        Pair<String[], Sort[]> sortParams = getSortParams();
         if (sortParams.first.length == 0) {
-            return this.realmQuery.findAllAsync();
+            return realmQuery.findAllAsync();
         }
 
-        return this.realmQuery.findAllSortedAsync(sortParams.first, sortParams.second);
+        return realmQuery.findAllSortedAsync(sortParams.first, sortParams.second);
     }
 
     @Nullable
     public Model findFirst() {
-        return this.realmQuery.findFirst();
+        return realmQuery.findFirst();
     }
 
     @NonNull
     public Model findFirstAsync() {
-        return this.realmQuery.findFirstAsync();
+        return realmQuery.findFirstAsync();
     }
 }

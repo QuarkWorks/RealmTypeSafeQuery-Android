@@ -78,12 +78,13 @@ public class BaseTest {
 
     @Test
     public void _01_test() {
-        assertEquals(10, RealmTypeSafeQuery.where(defaultInstance, BaseTestRecord.class).count());
+        assertEquals(10, RealmTypeSafeQuery.where(BaseTestRecord.class, defaultInstance).count());
     }
 
     @Test
     public void _02_test() {
-        BaseTestRecord t = RealmTypeSafeQuery.where(defaultInstance, BaseTestRecord.class).equalTo(BaseTestRecordFields.STRING_FIELD, "1").findFirst();
+        BaseTestRecord t = RealmTypeSafeQuery.with(defaultInstance).where(BaseTestRecord.class)
+                .equalTo(BaseTestRecordFields.STRING_FIELD, "1").findFirst();
         assertNotEquals(null, t);
         assertEquals("1", t.stringField);
     }
@@ -91,14 +92,16 @@ public class BaseTest {
     @Test
     public void _03_test() {
 
-        BaseTestRecord t = RealmTypeSafeQuery.where(defaultInstance, BaseTestRecord.class).equalTo(BaseTestRecordFields.STRING_FIELD, null).findFirst();
+        BaseTestRecord t = RealmTypeSafeQuery.with(defaultInstance).where(BaseTestRecord.class)
+                .equalTo(BaseTestRecordFields.STRING_FIELD, null).findFirst();
         assertEquals(null, t.stringField);
     }
 
     @Test
     public void _04_test() {
 
-        RealmResults<BaseTestRecord> r  = RealmTypeSafeQuery.where(BaseTestRecord.class).isNull(BaseTestRecordFields.STRING_FIELD).findAll();
+        RealmResults<BaseTestRecord> r  = RealmTypeSafeQuery.with(defaultInstance)
+                .where(BaseTestRecord.class).isNull(BaseTestRecordFields.STRING_FIELD).findAll();
         r.load();
         assertThat(r.size(), is(4));
 
@@ -107,7 +110,8 @@ public class BaseTest {
     @Test
     public void _05_test() {
 
-        RealmResults<BaseTestRecord> r  = RealmTypeSafeQuery.where(BaseTestRecord.class).isNotNull(BaseTestRecordFields.STRING_FIELD).findAll();
+        RealmResults<BaseTestRecord> r = RealmTypeSafeQuery.with(defaultInstance)
+                .where(BaseTestRecord.class).isNotNull(BaseTestRecordFields.STRING_FIELD).findAll();
         r.load();
         assertThat(r.size(), is(6));
     }

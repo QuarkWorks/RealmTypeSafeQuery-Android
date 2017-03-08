@@ -68,7 +68,7 @@ public class StatDataTest {
 
     @Test
     public void sumInt() {
-        int sum = (int) (RealmTypeSafeQuery.where(defaultInstance, StatData.class)
+        int sum = (int) (RealmTypeSafeQuery.with(defaultInstance).where(StatData.class)
                 .sum(StatDataFields.INTEGER_FIELD));
         //Assert.assertEquals(sum, StatData.DATA[StatData.SUM_DATA_INDEX][0]);
         Assert.assertEquals(sum, StatData.SUM_DATA[0]);
@@ -77,7 +77,7 @@ public class StatDataTest {
 
     @Test
     public void avgInt() {
-        int average = (int) (RealmTypeSafeQuery.where(defaultInstance, StatData.class)
+        int average = (int) (RealmTypeSafeQuery.with(defaultInstance).where(StatData.class)
                 .average(StatDataFields.INTEGER_FIELD));
         //Assert.assertEquals(average, StatData.DATA[StatData.AVG_DATA_INDEX][0]);
         Assert.assertEquals(average, StatData.AVG_DATA[0]);
@@ -86,7 +86,7 @@ public class StatDataTest {
 
     @Test
     public void maxInt() {
-        int max = RealmTypeSafeQuery.where(defaultInstance, StatData.class)
+        int max = RealmTypeSafeQuery.with(defaultInstance).where(StatData.class)
                 .max(StatDataFields.INTEGER_FIELD).intValue();
         //Assert.assertEquals(max, StatData.DATA[StatData.MAX_DATA_INDEX][0]);
         Assert.assertEquals(max, StatData.MAX_DATA[0]);
@@ -95,7 +95,7 @@ public class StatDataTest {
 
     @Test
     public void minInt() {
-        int min = RealmTypeSafeQuery.where(defaultInstance, StatData.class)
+        int min = RealmTypeSafeQuery.with(defaultInstance).where(StatData.class)
                 .min(StatDataFields.INTEGER_FIELD).intValue();
         //Assert.assertEquals(min, (StatData.DATA[StatData.MIN_DATA_INDEX][0]));
         Assert.assertEquals(min, StatData.MIN_DATA[0]);
