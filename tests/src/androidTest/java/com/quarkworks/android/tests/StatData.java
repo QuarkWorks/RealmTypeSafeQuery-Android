@@ -14,8 +14,8 @@ public class StatData implements RealmModel {
     static final int AVG_DATA_INDEX;
     static final int MAX_DATA_INDEX;
     static final int MIN_DATA_INDEX;
-    static Object [] SUM_DATA = {395, 3.95666666666667d};
-    static Object [] AVG_DATA = {13057, 130.57f};
+    static Object [] SUM_DATA = {13057, 130.57f};
+    static Object [] AVG_DATA = {395, 3.95666666666667d};
     static Object [] MAX_DATA = {1089, 10.89f};
     static Object [] MIN_DATA = {33, 0.33f};
 
