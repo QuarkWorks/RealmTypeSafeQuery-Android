@@ -14,6 +14,7 @@ import java.util.ListIterator;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.Sort;
 
 import android.support.test.InstrumentationRegistry;
 
@@ -64,6 +65,7 @@ public class StatDataTest {
     private static void initRecord(Object[] vals, StatData record) {
         record.integerField = (int) vals[0];
         record.floatField = (float) vals[1];
+        record.stringField = (String) vals[2];
     }
 
     @Test
@@ -99,5 +101,11 @@ public class StatDataTest {
                 .min(StatDataFields.INTEGER_FIELD).intValue();
         //Assert.assertEquals(min, (StatData.DATA[StatData.MIN_DATA_INDEX][0]));
         Assert.assertEquals(min, StatData.MIN_DATA[0]);
+    }
+    @Test
+    public void sortAscending() {
+        StatData min = RealmTypeSafeQuery.with(defaultInstance).where(StatData.class)
+                .sort(StatDataFields.STRING_FIELD, Sort.ASCENDING).findFirst();
+        Assert.assertEquals(min.stringField, StatData.MIN_DATA[2]);
     }
 }

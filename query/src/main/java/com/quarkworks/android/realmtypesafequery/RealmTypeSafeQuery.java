@@ -484,11 +484,19 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
 
     @Nullable
     public Model findFirst() {
-        return realmQuery.findFirst();
+        if (sortParams.isEmpty()) {
+            return realmQuery.findFirst();
+        }
+
+        return findAll().first();
     }
 
     @NonNull
     public Model findFirstAsync() {
+        if (!sortParams.isEmpty()) {
+            throw new IllegalStateException("Can't find first async with sort parameters");
+        }
+
         return realmQuery.findFirstAsync();
     }
 }
