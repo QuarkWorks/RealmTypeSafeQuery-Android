@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
-
+//todo add .with(realm)
             Log.d(TAG, "Count:" + RealmTypeSafeQuery.where(TestRecord.class).count());
 
             Log.d(TAG, "Equal To 1: " + RealmTypeSafeQuery.where(TestRecord.class).equalTo(TestRecordFields.STRING_FIELD, "1").findAll().toString());
