@@ -1,9 +1,9 @@
-package com.quarkworks.android.realmtypesafequery;
+package com.quarkworks.android.realmtypesafequery.constants;
 
 import java.util.Date;
 
 @SuppressWarnings("unused")
-public class RealmDefaultValues {
+public class RealmDefaults {
     public final static boolean BOOLEAN = false;
     public final static byte BYTE = 0x0;
     public final static short SHORT = 0;

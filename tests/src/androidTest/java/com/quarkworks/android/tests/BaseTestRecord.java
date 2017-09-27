@@ -4,7 +4,7 @@ package com.quarkworks.android.tests;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.quarkworks.android.realmtypesafequery.RealmDefaultValues;
+import com.quarkworks.android.realmtypesafequery.constants.RealmDefaults;
 import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFieldNames;
 import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFields;
 
@@ -64,7 +64,7 @@ public class BaseTestRecord implements RealmModel {
     public String primaryKey;
 
     @Required @NonNull
-    public String requiredField = RealmDefaultValues.STRING;
+    public String requiredField = RealmDefaults.STRING;
 
     @Nullable
     public BaseTestRecord parent = null;

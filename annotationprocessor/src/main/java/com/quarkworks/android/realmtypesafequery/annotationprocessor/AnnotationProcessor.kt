@@ -10,7 +10,6 @@ import com.squareup.javapoet.TypeName
 import com.squareup.javapoet.TypeSpec
 
 import java.io.IOException
-import java.util.HashSet
 import java.util.LinkedList
 
 import javax.annotation.processing.AbstractProcessor
@@ -22,7 +21,6 @@ import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
-import javax.lang.model.element.VariableElement
 import javax.lang.model.type.DeclaredType
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.ElementFilter
@@ -38,36 +36,38 @@ import io.realm.annotations.PrimaryKey
 @AutoService(Processor::class)
 @SupportedSourceVersion(SourceVersion.RELEASE_7)
 class AnnotationProcessor : AbstractProcessor() {
-    private val packageName: String
-    private var realmModel: DeclaredType? = null
-    private var realmList_erasure: TypeMirror? = null
-    private var typeUtils: Types? = null
-    private var elementUtils: Elements? = null
 
-    init {
-        packageName = "com.quarkworks.android.realmtypesafequery" + ".generated"
-    }
+    private fun String.toConstId() : String = this.replace("([a-z])([A-Z])".toRegex(), "$1_$2").toUpperCase()
 
-    override fun getSupportedAnnotationTypes(): Set<String> {
-        val set = HashSet<String>()
-        set.add(GenerateRealmFieldNames::class.java.canonicalName)
-        set.add(GenerateRealmFields::class.java.canonicalName)
+    private fun Element.isAnnotatedWith(annotation: Class<out Annotation>) : Boolean =
+            this.getAnnotation(annotation) != null
 
-        return set
-    }
+    private val fieldSpecsModifiers = arrayOf(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+    private val packageName: String = "com.quarkworks.android.realmtypesafequery" + ".generated"
+    private val supportedAnnotationTypes: Set<String> = setOf(
+            GenerateRealmFieldNames::class.java.canonicalName,
+            GenerateRealmFields::class.java.canonicalName)
 
-    @Synchronized override fun init(processingEnvironment: ProcessingEnvironment) {
+    private lateinit var realmModel: DeclaredType
+    private lateinit var realmListErasure: TypeMirror
+    private lateinit var typeUtils: Types
+    private lateinit var elementUtils: Elements
+
+    override fun getSupportedAnnotationTypes(): Set<String> = supportedAnnotationTypes
+
+    @Synchronized
+    override fun init(processingEnvironment: ProcessingEnvironment) {
         super.init(processingEnvironment)
         log("GIT_COMMIT:${GIT_COMMIT.`val`}")
         typeUtils = processingEnv.typeUtils
         elementUtils = processingEnv.elementUtils
-        realmModel = elementUtils!!.getTypeElement("io.realm.RealmModel").asType() as DeclaredType
-        realmList_erasure = typeUtils!!.erasure(elementUtils!!.getTypeElement("io.realm.RealmList")
+        realmModel = elementUtils.getTypeElement("io.realm.RealmModel").asType() as DeclaredType
+        realmListErasure = typeUtils.erasure(elementUtils.getTypeElement("io.realm.RealmList")
                 .asType())
     }
 
-    @Synchronized override //synchronized not needed
-    fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
+    @Synchronized
+    override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
         generateRealmFieldNames(roundEnv)
         generateRealmFields(roundEnv)
         return true
@@ -83,11 +83,11 @@ class AnnotationProcessor : AbstractProcessor() {
             for (realmField in variableElements) {
                 // ignore static and @Ignore fields
                 if (realmField.modifiers.contains(Modifier.STATIC)) continue
-                if (isAnnotatedWith(realmField, Ignore::class.java)) continue
+                if (realmField.isAnnotatedWith(Ignore::class.java)) continue
 
-                val name = toConstId(realmField.simpleName.toString())
+                val name = realmField.simpleName.toString().toConstId()
 
-                val fieldSpec = FieldSpec.builder(String::class.java, name, *fieldSpecs_modifiers)
+                val fieldSpec = FieldSpec.builder(String::class.java, name, *fieldSpecsModifiers)
                         .initializer("\$S", realmField.simpleName)
                         .build()
 
@@ -106,66 +106,60 @@ class AnnotationProcessor : AbstractProcessor() {
             } catch (e: IOException) {
                 this.reportError(element, e.toString())
             }
-
         }
     }
 
     private fun makeFieldSpec(realmClassElement: Element, realmFieldElement: Element): FieldSpec {
         
-        if (typeUtils!!.isSubtype(realmFieldElement.asType(), realmModel)) {
+        if (typeUtils.isSubtype(realmFieldElement.asType(), realmModel)) {
             return makeToOne(realmClassElement, realmFieldElement)
         }
-        if (typeUtils!!.isSubtype(typeUtils!!.erasure(realmFieldElement.asType()), realmList_erasure)) {
+        if (typeUtils.isSubtype(typeUtils.erasure(realmFieldElement.asType()), realmListErasure)) {
             return makeToMany(realmClassElement, realmFieldElement)
         }
-        val rfe_klass = realmFieldElement.asType().toString()
-        val field_name = realmFieldElement.simpleName.toString()
-        val field_name_constant = toConstId(field_name)
+        val rfeClass = realmFieldElement.asType().toString()
+        val fieldName = realmFieldElement.simpleName.toString()
 
-        val isPk = isAnnotatedWith(realmFieldElement, PrimaryKey::class.java)
-        val isIndex = isAnnotatedWith(realmFieldElement, Index::class.java)
-        val rce_tm = realmClassElement.asType()
-        val fs: FieldSpec
+        val isPrimaryKey = realmFieldElement.isAnnotatedWith(PrimaryKey::class.java)
+        val isIndex = realmFieldElement.isAnnotatedWith(Index::class.java)
+        val typeName = TypeName.get(realmClassElement.asType())
+        val parameterizedTypeName: ParameterizedTypeName
 
-        if (!isPk && !isIndex) {
-            val pt_n = ParameterizedTypeName.get(Maps.BaseMap[rfe_klass], TypeName.get(rce_tm))
-            fs = FieldSpec.builder(pt_n, field_name_constant, *fieldSpecs_modifiers)
-                    .initializer("new \$T(\$T.class, \$S)", pt_n, TypeName.get(rce_tm), field_name)
-                    .build()
+        parameterizedTypeName = if (!isPrimaryKey && !isIndex) {
+            ParameterizedTypeName.get(Maps.BASE_MAP[rfeClass], typeName)
         } else {
-            val pt_n = ParameterizedTypeName.get(Maps.IndexMap[Maps.BaseMap[rfe_klass]], TypeName.get(rce_tm))
-            fs = FieldSpec.builder(pt_n, field_name_constant, *fieldSpecs_modifiers)
-                    .initializer("new \$T(\$T.class, \$S)", pt_n, TypeName.get(rce_tm), field_name)
-                    .build()
+            ParameterizedTypeName.get(Maps.INDEX_MAP[Maps.BASE_MAP[rfeClass]], typeName)
         }
-        return fs
+
+        return FieldSpec.builder(parameterizedTypeName, fieldName.toConstId(), *fieldSpecsModifiers)
+                .initializer("new \$T(\$T.class, \$S)", parameterizedTypeName, typeName, fieldName)
+                .build()
     }
 
     private fun makeToMany(realmClassElement: Element, realmFieldElement: Element): FieldSpec {
-        val rce_tm = realmClassElement.asType()
-        val field_name = realmFieldElement.simpleName.toString()
-        val field_name_constant = toConstId(field_name)
+        val typeMirror = realmClassElement.asType()
+        val fieldName = realmFieldElement.simpleName.toString()
 
-        val pt_n = ParameterizedTypeName.get(Maps.realmtomanyrelationship,
-                TypeName.get(rce_tm),
+        val parameterizedTypeName = ParameterizedTypeName.get(Maps.REALM_TO_MANY_RELATIONSHIP,
+                TypeName.get(typeMirror),
                 TypeName.get((realmFieldElement.asType() as DeclaredType).typeArguments[0]))
 
-        return FieldSpec.builder(pt_n, field_name_constant, *fieldSpecs_modifiers)
-                .initializer("new \$T(\$T.class, \$S)", pt_n, TypeName.get(rce_tm), field_name)
+        return FieldSpec.builder(parameterizedTypeName, fieldName.toConstId(), *fieldSpecsModifiers)
+                .initializer("new \$T(\$T.class, \$S)", parameterizedTypeName, TypeName.get(typeMirror), fieldName)
                 .build()
 
     }
 
     private fun makeToOne(realmClassElement: Element, realmFieldElement: Element): FieldSpec {
-        val rce_tm = realmClassElement.asType()
-        val field_name = realmFieldElement.simpleName.toString()
-        val field_name_constant = toConstId(field_name)
-        val pt_n = ParameterizedTypeName.get(Maps.realmtoonerelationship,
-                TypeName.get(rce_tm),
+        val typeMirror = realmClassElement.asType()
+        val fieldName = realmFieldElement.simpleName.toString()
+
+        val parameterizedTypeName = ParameterizedTypeName.get(Maps.REALM_TO_ONE_RELATIONSHIP,
+                TypeName.get(typeMirror),
                 TypeName.get(realmFieldElement.asType()))
 
-        return FieldSpec.builder(pt_n, field_name_constant, *fieldSpecs_modifiers)
-                .initializer("new \$T(\$T.class, \$S)", pt_n, TypeName.get(rce_tm), field_name)
+        return FieldSpec.builder(parameterizedTypeName, fieldName.toConstId(), *fieldSpecsModifiers)
+                .initializer("new \$T(\$T.class, \$S)", parameterizedTypeName, TypeName.get(typeMirror), fieldName)
                 .build()
 
     }
@@ -175,15 +169,11 @@ class AnnotationProcessor : AbstractProcessor() {
             if (element !is TypeElement) continue
 
             val variableElements = ElementFilter.fieldsIn(element.enclosedElements)
-            val realmFieldClassFSpecs = LinkedList<FieldSpec>()
 
-            for (realmFieldElement in variableElements) {
-                // ignore static and @Ignore fields
-                if (realmFieldElement.modifiers.contains(Modifier.STATIC)) continue
-                if (isAnnotatedWith(realmFieldElement, Ignore::class.java)) continue
-
-                realmFieldClassFSpecs.add(makeFieldSpec(element, realmFieldElement))
-            }
+            // ignore static and @Ignore fields
+            val realmFieldClassFSpecs = variableElements.filter {
+                        !it.modifiers.contains(Modifier.STATIC) && !it.isAnnotatedWith(Ignore::class.java)
+            }.mapTo(LinkedList()) { makeFieldSpec(element, it) }
 
             val className = element.simpleName.toString() + "Fields"
 
@@ -199,7 +189,6 @@ class AnnotationProcessor : AbstractProcessor() {
             } catch (e: IOException) {
                 this.reportError(element, e.toString())
             }
-
         }
     }
 
@@ -231,19 +220,4 @@ class AnnotationProcessor : AbstractProcessor() {
             log(m)
         }
     }
-
-    companion object {
-
-        private val fieldSpecs_modifiers = arrayOf(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-
-        private fun isAnnotatedWith(element: Element, annotation: Class<out Annotation>): Boolean {
-
-            return element.getAnnotation(annotation) != null
-        }
-
-        private fun toConstId(`in`: String): String {
-            return `in`.replace("([a-z])([A-Z])".toRegex(), "$1_$2").toUpperCase()
-        }
-    }
-
 }

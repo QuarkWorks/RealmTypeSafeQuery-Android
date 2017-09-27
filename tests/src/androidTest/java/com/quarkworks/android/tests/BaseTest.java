@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.quarkworks.android.realmtypesafequery.RealmTypeSafeQuery;
+import com.quarkworks.android.realmtypesafequery.fields.RealmIndexedBooleanField;
 import com.quarkworks.android.realmtypesafequery.generated.BaseTestRecordFields;
 
 import org.junit.AfterClass;
