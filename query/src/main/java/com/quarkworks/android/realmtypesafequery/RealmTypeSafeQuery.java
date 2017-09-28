@@ -484,11 +484,7 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
 
     @Nullable
     public Model findFirst() {
-        if (sortParams.isEmpty()) {
-            return realmQuery.findFirst();
-        }
-
-        return findAll().first();
+        return realmQuery.findAll().first(null);
     }
 
     @NonNull
