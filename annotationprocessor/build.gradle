@@ -33,7 +33,8 @@ sourceSets {
     main.java.srcDirs += source_GIT_COMMIT
 }
 
-
+//Embed jitpack GIT_COMMIT env variable value
+//add a build signature to jitpack builds
 import com.squareup.javapoet.FieldSpec
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.TypeName
