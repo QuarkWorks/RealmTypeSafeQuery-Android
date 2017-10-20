@@ -18,7 +18,7 @@ def source_GIT_COMMIT = new File(buildDir, 'generated/source/GIT_COMMIT/main/jav
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':annotations')
-    compile "io.realm:realm-annotations:$realm_annotations_version"
+    compile "io.realm:realm-annotations:$realm_version"
     kapt "com.google.auto.service:auto-service:1.0-rc2"
     compileOnly "com.google.auto.service:auto-service:1.0-rc2"
     compile 'com.squareup:javapoet:1.7.0'
