@@ -1,6 +1,8 @@
 package com.quarkworks.android.realmtypesafequery.annotationprocessor
 
 import com.google.auto.service.AutoService
+import com.quarkworks.android.realmtypesafequery.annotations.SkipGenerationOfRealmFieldName
+import com.quarkworks.android.realmtypesafequery.annotations.SkipGenerationOfRealmField
 import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFieldNames
 import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFields
 import com.squareup.javapoet.FieldSpec
@@ -84,6 +86,7 @@ class AnnotationProcessor : AbstractProcessor() {
                 // ignore static and @Ignore fields
                 if (realmField.modifiers.contains(Modifier.STATIC)) continue
                 if (realmField.isAnnotatedWith(Ignore::class.java)) continue
+                if (realmField.isAnnotatedWith(SkipGenerationOfRealmFieldName::class.java)) continue
 
                 val name = realmField.simpleName.toString().toConstId()
 
@@ -172,7 +175,9 @@ class AnnotationProcessor : AbstractProcessor() {
 
             // ignore static and @Ignore fields
             val realmFieldClassFSpecs = variableElements.filter {
-                        !it.modifiers.contains(Modifier.STATIC) && !it.isAnnotatedWith(Ignore::class.java)
+                !it.modifiers.contains(Modifier.STATIC) &&
+                                !it.isAnnotatedWith(Ignore::class.java) &&
+                                !it.isAnnotatedWith(SkipGenerationOfRealmField::class.java)
             }.mapTo(LinkedList()) { makeFieldSpec(element, it) }
 
             val className = element.simpleName.toString() + "Fields"
