@@ -5,7 +5,7 @@ import io.realm.Case
 import io.realm.RealmModel
 import io.realm.RealmQuery
 
-open class RealmStringField<Model : RealmModel>(override val modelClass: Class<Model>, override val keyPath: String) :
+open class RealmStringField<Model : RealmModel>(override val modelClass: Class<Model>, override val name: String) :
         RealmField<Model>,
         RealmEquatableField<Model, String>,
         RealmSortableField<Model, String>,
@@ -14,50 +14,50 @@ open class RealmStringField<Model : RealmModel>(override val modelClass: Class<M
 
     override fun equalTo(query: RealmQuery<Model>, value: String?) {
         if (value == null) {
-            this.isNull(query)
+            isNull(query)
             return
         }
 
-        query.equalTo(this.keyPath, value)
+        query.equalTo(name, value)
     }
 
     override fun notEqualTo(query: RealmQuery<Model>, value: String?) {
         if (value == null) {
-            this.isNotNull(query)
+            isNotNull(query)
             return
         }
 
-        query.notEqualTo(this.keyPath, value)
+        query.notEqualTo(name, value)
     }
 
     override fun never(query: RealmQuery<Model>) {
-        query.beginGroup().equalTo(this.keyPath, "Q").equalTo(this.keyPath, "W").endGroup()
+        query.beginGroup().equalTo(name, "Q").equalTo(name, "W").endGroup()
     }
 
     override fun `in`(query: RealmQuery<Model>, values: Array<String>) {
-        query.`in`(keyPath, values)
+        query.`in`(name, values)
     }
 
     fun `in`(query: RealmQuery<Model>, values: Array<String>, casing: Case) {
-        query.`in`(keyPath, values, casing)
+        query.`in`(name, values, casing)
     }
 
     fun equalTo(query: RealmQuery<Model>, value: String?, casing: Case) {
         if (value == null) {
-            this.isNull(query)
+            isNull(query)
             return
         }
 
-        query.equalTo(this.keyPath, value, casing)
+        query.equalTo(name, value, casing)
     }
 
     fun notEqualTo(query: RealmQuery<Model>, value: String?, casing: Case) {
         if (value == null) {
-            this.isNotNull(query)
+            isNotNull(query)
             return
         }
 
-        query.notEqualTo(this.keyPath, value, casing)
+        query.notEqualTo(name, value, casing)
     }
 
     fun beginsWith(query: RealmQuery<Model>, value: String?) {
@@ -70,7 +70,7 @@ open class RealmStringField<Model : RealmModel>(override val modelClass: Class<M
             return
         }
 
-        query.beginsWith(keyPath, value, casing)
+        query.beginsWith(name, value, casing)
     }
 
     fun endsWith(query: RealmQuery<Model>, value: String?) {
@@ -83,7 +83,7 @@ open class RealmStringField<Model : RealmModel>(override val modelClass: Class<M
             return
         }
 
-        query.endsWith(keyPath, value, casing)
+        query.endsWith(name, value, casing)
     }
 
     fun contains(query: RealmQuery<Model>, value: String?) {
@@ -96,7 +96,7 @@ open class RealmStringField<Model : RealmModel>(override val modelClass: Class<M
             return
         }
 
-        query.contains(keyPath, value, casing)
+        query.contains(name, value, casing)
     }
 
     fun contains(query: RealmQuery<Model>, value: String?, delimiter: String) {
@@ -110,10 +110,10 @@ open class RealmStringField<Model : RealmModel>(override val modelClass: Class<M
         }
 
         query.beginGroup()
-                .contains(keyPath, delimiter + value + delimiter, casing)
-                .beginsWith(keyPath, value + delimiter, casing)
-                .endsWith(keyPath, delimiter + value, casing)
-                .equalTo(keyPath, value, casing)
+                .contains(name, delimiter + value + delimiter, casing)
+                .beginsWith(name, value + delimiter, casing)
+                .endsWith(name, delimiter + value, casing)
+                .equalTo(name, value, casing)
                 .endGroup()
 
     }
@@ -128,6 +128,6 @@ open class RealmStringField<Model : RealmModel>(override val modelClass: Class<M
             return
         }
 
-        query.like(keyPath, value, casing)
+        query.like(name, value, casing)
     }
 }

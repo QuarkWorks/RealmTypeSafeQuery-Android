@@ -174,13 +174,13 @@ fun <T : RealmModel, V> RealmQuery<T>.max(field: RealmMinMaxField<T, V>) : V? = 
     Results
  */
 fun <T : RealmModel> RealmQuery<T>.findAllSorted(field: RealmSortableField<T, *>, sort: Sort) : RealmResults<T> =
-        findAllSorted(field.keyPath, sort)
+        findAllSorted(field.name, sort)
 
 fun <T : RealmModel> RealmQuery<T>.findAllSorted(field1: RealmSortableField<T, *>, sort1: Sort, field2: RealmSortableField<T, *>, sort2: Sort) : RealmResults<T> =
-        findAllSorted(field1.keyPath, sort1, field2.keyPath, sort2)
+        findAllSorted(field1.name, sort1, field2.name, sort2)
 
 fun <T : RealmModel> RealmQuery<T>.findAllSorted(fields: Array<RealmSortableField<T, *>>, sorts: Array<Sort>) : RealmResults<T> =
-        findAllSorted(fields.map { it.keyPath }.toTypedArray(), sorts)
+        findAllSorted(fields.map { it.name }.toTypedArray(), sorts)
 
 /*
     Find First
@@ -200,10 +200,10 @@ fun <T : RealmModel> RealmQuery<T>.findFirstSorted(fields: Array<RealmSortableFi
  */
 
 fun <T : RealmModel> RealmQuery<T>.findAllSortedAsync(field: RealmSortableField<T, *>, sort: Sort) : RealmResults<T> =
-        findAllSortedAsync(field.keyPath, sort)
+        findAllSortedAsync(field.name, sort)
 
 fun <T : RealmModel> RealmQuery<T>.findAllSortedAsync(field1: RealmSortableField<T, *>, sort1: Sort, field2: RealmSortableField<T, *>, sort2: Sort) : RealmResults<T> =
-        findAllSortedAsync(field1.keyPath, sort1, field2.keyPath, sort2)
+        findAllSortedAsync(field1.name, sort1, field2.name, sort2)
 
 fun <T : RealmModel> RealmQuery<T>.findAllSortedAsync(fields: Array<RealmSortableField<T, *>>, sorts: Array<Sort>) : RealmResults<T> =
-        findAllSortedAsync(fields.map { it.keyPath }.toTypedArray(), sorts)
+        findAllSortedAsync(fields.map { it.name }.toTypedArray(), sorts)

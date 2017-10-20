@@ -392,7 +392,7 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
     private static String[] fieldNames(RealmField<?>[] fields) {
         final String[] fieldNames = new String[fields.length];
         for (int i = 0; i < fields.length; i++) {
-            fieldNames[i] = fields[i].getKeyPath();
+            fieldNames[i] = fields[i].getName();
         }
 
         return fieldNames;
@@ -405,12 +405,12 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
 
     @NonNull
     public RealmResults<Model> findAllSorted(RealmSortableField<Model, ?> field, Sort sort) {
-        return realmQuery.findAllSorted(field.getKeyPath(), sort);
+        return realmQuery.findAllSorted(field.getName(), sort);
     }
 
     @NonNull
     public RealmResults<Model> findAllSorted(RealmSortableField<Model, ?> field1, Sort sort1, RealmSortableField<Model, ?> field2, Sort sort2) {
-        return realmQuery.findAllSorted(field1.getKeyPath(), sort1, field2.getKeyPath(), sort2);
+        return realmQuery.findAllSorted(field1.getName(), sort1, field2.getName(), sort2);
     }
 
     @NonNull
@@ -453,12 +453,12 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
 
     @NonNull
     public RealmResults<Model> findAllSortedAsync(RealmSortableField<Model, ?> field, Sort sort) {
-        return realmQuery.findAllSortedAsync(field.getKeyPath(), sort);
+        return realmQuery.findAllSortedAsync(field.getName(), sort);
     }
 
     @NonNull
     public RealmResults<Model> findAllSortedAsync(RealmSortableField<Model, ?> field1, Sort sort1, RealmSortableField<Model, ?> field2, Sort sort2) {
-        return realmQuery.findAllSortedAsync(field1.getKeyPath(), sort1, field2.getKeyPath(), sort2);
+        return realmQuery.findAllSortedAsync(field1.getName(), sort1, field2.getName(), sort2);
     }
 
     @NonNull
@@ -477,7 +477,7 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
 
     @NonNull
     public RealmResults<Model> distinct(RealmEquatableField<Model, ?> field) {
-        return realmQuery.distinct(field.getKeyPath());
+        return realmQuery.distinct(field.getName());
     }
 
     /*
@@ -502,7 +502,7 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
 
         @NonNull
         public SortBuilder<Model> sort(RealmSortableField<Model, ?> field, Sort sort) {
-            sortParams.add(new Pair<>(field.getKeyPath(), sort));
+            sortParams.add(new Pair<>(field.getName(), sort));
             return this;
         }
 

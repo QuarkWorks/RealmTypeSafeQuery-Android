@@ -5,7 +5,7 @@ import io.realm.RealmQuery
 import io.realm.RealmResults
 
 interface RealmField<Model : RealmModel> {
-    val keyPath: String
+    val name: String
     val modelClass: Class<Model>
 
     val isIndexed: Boolean
@@ -19,7 +19,7 @@ interface RealmNullableField<Model : RealmModel> : RealmField<Model> {
 
     fun isNull(query: RealmQuery<Model>) {
         try {
-            query.isNull(this.keyPath) // throws IllegalArgumentException if field is Required
+            query.isNull(name) // throws IllegalArgumentException if field is Required
         } catch (ignored: IllegalArgumentException) {
             never(query)
         }
@@ -27,7 +27,7 @@ interface RealmNullableField<Model : RealmModel> : RealmField<Model> {
 
     fun isNotNull(query: RealmQuery<Model>) {
         try {
-            query.isNotNull(this.keyPath) // throws IllegalArgumentException if field is Required
+            query.isNotNull(name) // throws IllegalArgumentException if field is Required
         } catch (ignored: IllegalArgumentException) {
             // do nothing
         }
@@ -49,11 +49,11 @@ interface RealmComparableField<Model : RealmModel, in Value> : RealmEquatableFie
 
 interface RealmEmptyableField<Model : RealmModel> : RealmField<Model> {
     fun isEmpty(query: RealmQuery<Model>) {
-        query.isEmpty(keyPath)
+        query.isEmpty(name)
     }
 
     fun isNotEmpty(query: RealmQuery<Model>) {
-        query.isNotEmpty(keyPath)
+        query.isNotEmpty(name)
     }
 }
 
@@ -65,10 +65,10 @@ interface RealmInableField<Model : RealmModel, Value> : RealmField<Model> {
 }
 
 interface RealmDistinctableField<Model : RealmModel> : RealmField<Model> {
-    fun distinct(query: RealmQuery<Model>) : RealmResults<Model> = query.distinct(keyPath)
-    fun distinctAsync(query: RealmQuery<Model>) : RealmResults<Model> = query.distinctAsync(keyPath)
+    fun distinct(query: RealmQuery<Model>) : RealmResults<Model> = query.distinct(name)
+    fun distinctAsync(query: RealmQuery<Model>) : RealmResults<Model> = query.distinctAsync(name)
     fun distinct(query: RealmQuery<Model>, vararg otherFields: RealmDistinctableField<Model>) : RealmResults<Model> =
-            query.distinct(keyPath, *otherFields.map { it.keyPath }.toTypedArray())
+            query.distinct(name, *otherFields.map { it.name }.toTypedArray())
 }
 
 interface RealmMinMaxField<Model : RealmModel, out Value> : RealmField<Model> {
@@ -78,5 +78,5 @@ interface RealmMinMaxField<Model : RealmModel, out Value> : RealmField<Model> {
 
 interface RealmAggregatableField<Model : RealmModel, out Value> : RealmField<Model> {
     fun sum(query: RealmQuery<Model>) : Value
-    fun average(query: RealmQuery<Model>) : Double = query.average(keyPath)
+    fun average(query: RealmQuery<Model>) : Double = query.average(name)
 }

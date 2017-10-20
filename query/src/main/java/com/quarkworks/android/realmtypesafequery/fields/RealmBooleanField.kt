@@ -3,7 +3,7 @@ package com.quarkworks.android.realmtypesafequery.fields
 import io.realm.RealmModel
 import io.realm.RealmQuery
 
-open class RealmBooleanField<Model : RealmModel>(override val modelClass: Class<Model>, override val keyPath: String) :
+open class RealmBooleanField<Model : RealmModel>(override val modelClass: Class<Model>, override val name: String) :
         RealmField<Model>,
         RealmEquatableField<Model, Boolean>,
         RealmSortableField<Model, Boolean>,
@@ -11,27 +11,27 @@ open class RealmBooleanField<Model : RealmModel>(override val modelClass: Class<
 
     override fun equalTo(query: RealmQuery<Model>, value: Boolean?) {
         if (value == null) {
-            this.isNull(query)
+            isNull(query)
             return
         }
 
-        query.equalTo(this.keyPath, value)
+        query.equalTo(name, value)
     }
 
     override fun notEqualTo(query: RealmQuery<Model>, value: Boolean?) {
         if (value == null) {
-            this.isNotNull(query)
+            isNotNull(query)
             return
         }
 
-        query.notEqualTo(this.keyPath, value)
+        query.notEqualTo(name, value)
     }
 
     override fun never(query: RealmQuery<Model>) {
-        query.beginGroup().equalTo(this.keyPath, true).equalTo(this.keyPath, false).endGroup()
+        query.beginGroup().equalTo(name, true).equalTo(name, false).endGroup()
     }
 
     override fun `in`(query: RealmQuery<Model>, values: Array<Boolean>) {
-        query.`in`(keyPath, values)
+        query.`in`(name, values)
     }
 }

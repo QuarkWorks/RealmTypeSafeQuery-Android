@@ -5,12 +5,12 @@ import io.realm.RealmModel
 import io.realm.RealmQuery
 
 class RealmToManyRelationship<Model : RealmModel, RelationshipModel : RealmModel>
-    (override val modelClass: Class<Model>, override val keyPath: String) :
+    (override val modelClass: Class<Model>, override val name: String) :
         RealmRelationship<Model, RelationshipModel>,
         RealmEmptyableField<Model>
 
 class RealmToOneRelationship<Model : RealmModel, RelationshipModel : RealmModel>
-    (override val modelClass: Class<Model>, override val keyPath: String) :
+    (override val modelClass: Class<Model>, override val name: String) :
         RealmRelationship<Model, RelationshipModel>,
         RealmNullableField<Model> {
 
@@ -21,7 +21,7 @@ class RealmToOneRelationship<Model : RealmModel, RelationshipModel : RealmModel>
 
 interface RealmRelationship<Model : RealmModel, RelationshipModel : RealmModel>: RealmField<Model> {
 
-    private fun linkKeyPath(field: RealmField<*>): String = keyPath + "." + field.keyPath
+    private fun linkKeyPath(field: RealmField<*>): String = name + "." + field.name
 
     /*
         Basic

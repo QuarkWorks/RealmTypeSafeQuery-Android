@@ -3,7 +3,7 @@ package com.quarkworks.android.realmtypesafequery.fields
 import io.realm.RealmModel
 import io.realm.RealmQuery
 
-open class RealmByteField<Model : RealmModel>(override val modelClass: Class<Model>, override val keyPath: String) :
+open class RealmByteField<Model : RealmModel>(override val modelClass: Class<Model>, override val name: String) :
         RealmField<Model>,
         RealmEquatableField<Model, Byte>,
         RealmSortableField<Model, Byte>,
@@ -11,27 +11,27 @@ open class RealmByteField<Model : RealmModel>(override val modelClass: Class<Mod
 
     override fun equalTo(query: RealmQuery<Model>, value: Byte?) {
         if (value == null) {
-            this.isNull(query)
+            isNull(query)
             return
         }
 
-        query.equalTo(this.keyPath, value)
+        query.equalTo(name, value)
     }
 
     override fun notEqualTo(query: RealmQuery<Model>, value: Byte?) {
         if (value == null) {
-            this.isNotNull(query)
+            isNotNull(query)
             return
         }
 
-        query.notEqualTo(this.keyPath, value)
+        query.notEqualTo(name, value)
     }
 
     override fun never(query: RealmQuery<Model>) {
-        query.beginGroup().equalTo(this.keyPath, 0.toByte()).equalTo(this.keyPath, 1.toByte()).endGroup()
+        query.beginGroup().equalTo(name, 0.toByte()).equalTo(name, 1.toByte()).endGroup()
     }
 
     override fun `in`(query: RealmQuery<Model>, values: Array<Byte>) {
-        query.`in`(keyPath, values)
+        query.`in`(name, values)
     }
 }
