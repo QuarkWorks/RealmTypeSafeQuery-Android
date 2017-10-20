@@ -1,4 +1,4 @@
-package com.quarkworks.android.tests;
+package com.quarkworks.android.tests.models;
 
 
 import android.support.annotation.NonNull;

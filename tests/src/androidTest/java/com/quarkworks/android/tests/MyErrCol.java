@@ -7,9 +7,9 @@ import org.junit.rules.ErrorCollector;
  * add the obvious
  */
 class MyErrCol extends ErrorCollector {
-    void checkSucceeds(Runnable runable) {
+    void checkSucceeds(Runnable runnable) {
         try {
-            runable.run();
+            runnable.run();
         } catch (Throwable e) {
             addError(e);
         }

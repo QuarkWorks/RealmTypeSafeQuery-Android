@@ -5,8 +5,8 @@ import android.annotation.SuppressLint;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.quarkworks.android.realmtypesafequery.RealmTypeSafeQuery;
-import com.quarkworks.android.realmtypesafequery.fields.RealmIndexedBooleanField;
 import com.quarkworks.android.realmtypesafequery.generated.BaseTestRecordFields;
+import com.quarkworks.android.tests.models.BaseTestRecord;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -78,12 +78,12 @@ public class BaseTest {
 
 
     @Test
-    public void _01_test() {
+    public void test01() {
         assertEquals(10, RealmTypeSafeQuery.where(BaseTestRecord.class, defaultInstance).count());
     }
 
     @Test
-    public void _02_test() {
+    public void test02() {
         BaseTestRecord t = RealmTypeSafeQuery.with(defaultInstance).where(BaseTestRecord.class)
                 .equalTo(BaseTestRecordFields.STRING_FIELD, "1").findFirst();
         assertNotEquals(null, t);
@@ -91,7 +91,7 @@ public class BaseTest {
     }
 
     @Test
-    public void _03_test() {
+    public void test03() {
 
         BaseTestRecord t = RealmTypeSafeQuery.with(defaultInstance).where(BaseTestRecord.class)
                 .equalTo(BaseTestRecordFields.STRING_FIELD, null).findFirst();
@@ -99,7 +99,7 @@ public class BaseTest {
     }
 
     @Test
-    public void _04_test() {
+    public void test04() {
 
         RealmResults<BaseTestRecord> r  = RealmTypeSafeQuery.with(defaultInstance)
                 .where(BaseTestRecord.class).isNull(BaseTestRecordFields.STRING_FIELD).findAll();
@@ -109,30 +109,11 @@ public class BaseTest {
     }
 
     @Test
-    public void _05_test() {
+    public void test05() {
 
         RealmResults<BaseTestRecord> r = RealmTypeSafeQuery.with(defaultInstance)
                 .where(BaseTestRecord.class).isNotNull(BaseTestRecordFields.STRING_FIELD).findAll();
         r.load();
         assertThat(r.size(), is(6));
-    }
-
-    private Object [] extract(BaseTestRecord in)
-    {
-        return new Object[] {
-        in.booleanField ,
-        in.byteArrayField ,
-        in.byteField ,
-        in.dateField ,
-        in.doubleField,
-        in.floatField,
-        in.integerField,
-        in.longField,
-        in.shortField,
-        in.stringField ,
-        in.ignoredField,
-        in.indexedField,
-        in.requiredField ,
-        };
     }
 }

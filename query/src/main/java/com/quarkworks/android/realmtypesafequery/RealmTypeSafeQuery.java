@@ -34,19 +34,19 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
      */
 
     @NonNull
-    public static RealmTypeSafeQuery1 with(@NonNull Realm realm) {
-        return new RealmTypeSafeQuery1(realm);
+    public static Builder with(@NonNull Realm realm) {
+        return new Builder(realm);
     }
 
     /*
         Intermediary builder class
      */
 
-    public static final class RealmTypeSafeQuery1 {
+    public static final class Builder {
         @NonNull
         private final Realm realm;
 
-        private RealmTypeSafeQuery1(@NonNull Realm realm) {
+        private Builder(@NonNull Realm realm) {
             this.realm = realm;
         }
 

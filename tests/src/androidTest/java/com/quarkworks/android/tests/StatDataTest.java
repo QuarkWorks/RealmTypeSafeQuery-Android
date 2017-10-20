@@ -20,6 +20,8 @@ import android.support.test.InstrumentationRegistry;
 
 import com.quarkworks.android.realmtypesafequery.RealmTypeSafeQuery;
 import com.quarkworks.android.realmtypesafequery.generated.StatDataFields;
+import com.quarkworks.android.tests.models.StatData;
+
 import org.junit.Assert;
 
 @SuppressWarnings("ConstantConditions")

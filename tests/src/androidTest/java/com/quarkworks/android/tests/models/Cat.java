@@ -1,4 +1,4 @@
-package com.quarkworks.android.tests;
+package com.quarkworks.android.tests.models;
 // from intro examples realm-java
 
 import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFieldNames;
@@ -10,6 +10,6 @@ import io.realm.annotations.RealmClass;
 @RealmClass
 @GenerateRealmFieldNames
 @GenerateRealmFields
-public class Dog implements RealmModel {
+public class Cat implements RealmModel {
     public  String name;
 }
