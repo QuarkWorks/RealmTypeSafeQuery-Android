@@ -7,6 +7,8 @@ import android.support.test.runner.AndroidJUnit4;
 import com.quarkworks.android.realmtypesafequery.RealmTypeSafeQuery;
 import com.quarkworks.android.realmtypesafequery.generated.CatFields;
 import com.quarkworks.android.realmtypesafequery.generated.PersonFields;
+import com.quarkworks.android.tests.models.Cat;
+import com.quarkworks.android.tests.models.Person;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -34,8 +36,10 @@ public class IntroExampleTest {
     };
     @Rule
     public MyErrCol collector = new MyErrCol();
-    public void checkSucceeds(Runnable[] cmds) {
-        for (Runnable r : cmds) collector.checkSucceeds(r);
+    public void checkSucceeds(Runnable[] commands) {
+        for (Runnable r : commands) {
+            collector.checkSucceeds(r);
+        }
     }
 
     @BeforeClass
@@ -156,7 +160,7 @@ public class IntroExampleTest {
         // Find the first person (no query conditions) and read a field
         final Person person = RealmTypeSafeQuery.with(defaultInstance).where(Person.class).findFirst();
         assert person != null;
-        Runnable[] cmds = {
+        Runnable[] commands = {
                 new Runnable() {
                     public void run() {
                         assertNotNull(person);
@@ -164,18 +168,16 @@ public class IntroExampleTest {
                 },
                 new Runnable() {
                     public void run() {
-
                         assertEquals(person.getName(), "Young Person");
                     }
                 },
                 new Runnable() {
                     public void run() {
-
                         assertEquals(person.getAge(), 14);
                     }
                 }
         };
-        checkSucceeds(cmds);
+        checkSucceeds(commands);
 
         // Update person in a transaction
         defaultInstance.executeTransaction(new Realm.Transaction() {
@@ -187,7 +189,7 @@ public class IntroExampleTest {
             }
         });
 
-        cmds = new Runnable[]{
+        commands = new Runnable[]{
                 new Runnable() {
                     public void run() {
                         assertNotNull(person);
@@ -195,18 +197,15 @@ public class IntroExampleTest {
                 },
                 new Runnable() {
                     public void run() {
-                        //noinspection ConstantConditions
                         assertEquals(person.getName(), "Senior Person");
                     }
                 },
                 new Runnable() {
-                    public void run() {
-                        //noinspection ConstantConditions
-                        assertEquals(person.getAge(), 99);
+                    public void run() {assertEquals(person.getAge(), 99);
                     }
                 }
         };
-        checkSucceeds(cmds);
+        checkSucceeds(commands);
         defaultInstance.executeTransaction(delete_all);
     }
 }
