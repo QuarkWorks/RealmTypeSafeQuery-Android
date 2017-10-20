@@ -21,7 +21,7 @@ class RealmToOneRelationship<Model : RealmModel, RelationshipModel : RealmModel>
 
 interface RealmRelationship<Model : RealmModel, RelationshipModel : RealmModel>: RealmField<Model> {
 
-    private fun linkKeyPath(field: RealmField<*>): String = keyPath + "" + field.keyPath
+    private fun linkKeyPath(field: RealmField<*>): String = keyPath + "." + field.keyPath
 
     /*
         Basic

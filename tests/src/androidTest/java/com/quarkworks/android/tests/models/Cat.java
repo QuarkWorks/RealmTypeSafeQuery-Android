@@ -11,5 +11,5 @@ import io.realm.annotations.RealmClass;
 @GenerateRealmFieldNames
 @GenerateRealmFields
 public class Cat implements RealmModel {
-    public  String name;
+    public String name;
 }
