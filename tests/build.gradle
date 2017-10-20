@@ -26,4 +26,5 @@ dependencies {
 
     androidTestProvided project(':annotationprocessor')
     androidTestCompile project(':query')
+    androidTestCompile project(':annotations')
 }
