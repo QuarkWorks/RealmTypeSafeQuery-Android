@@ -111,9 +111,9 @@ open class RealmStringField<Model : RealmModel>(override val modelClass: Class<M
 
         query.beginGroup()
                 .contains(name, delimiter + value + delimiter, casing)
-                .beginsWith(name, value + delimiter, casing)
-                .endsWith(name, delimiter + value, casing)
-                .equalTo(name, value, casing)
+                .or().beginsWith(name, value + delimiter, casing)
+                .or().endsWith(name, delimiter + value, casing)
+                .or().equalTo(name, value, casing)
                 .endGroup()
 
     }
