@@ -7,7 +7,7 @@ class RealmFloatField<Model : RealmModel>(override val modelClass: Class<Model>,
         RealmField<Model>,
         RealmEquatableField<Model, Float>,
         RealmComparableField<Model, Float>,
-        RealmSortableField<Model, Float>,
+        RealmSortableField<Model>,
         RealmInableField<Model, Float>,
         RealmMinMaxField<Model, Float>,
         RealmAggregatableField<Model, Double> {

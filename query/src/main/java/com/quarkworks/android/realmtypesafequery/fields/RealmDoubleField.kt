@@ -7,7 +7,7 @@ class RealmDoubleField<Model : RealmModel>(override val modelClass: Class<Model>
         RealmField<Model>,
         RealmEquatableField<Model, Double>,
         RealmComparableField<Model, Double>,
-        RealmSortableField<Model, Double>,
+        RealmSortableField<Model>,
         RealmInableField<Model, Double>,
         RealmMinMaxField<Model, Double>,
         RealmAggregatableField<Model, Double> {

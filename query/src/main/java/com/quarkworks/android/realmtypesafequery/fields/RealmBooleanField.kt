@@ -6,7 +6,7 @@ import io.realm.RealmQuery
 open class RealmBooleanField<Model : RealmModel>(override val modelClass: Class<Model>, override val name: String) :
         RealmField<Model>,
         RealmEquatableField<Model, Boolean>,
-        RealmSortableField<Model, Boolean>,
+        RealmSortableField<Model>,
         RealmInableField<Model, Boolean> {
 
     override fun equalTo(query: RealmQuery<Model>, value: Boolean?) {

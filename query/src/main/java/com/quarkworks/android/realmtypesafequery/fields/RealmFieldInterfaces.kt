@@ -11,7 +11,7 @@ interface RealmField<Model : RealmModel> {
     val isIndexed: Boolean
         get() = this is RealmIndexedField<*>
     val isSortable: Boolean
-        get() = this is RealmSortableField<*, *>
+        get() = this is RealmSortableField<*>
 }
 
 interface RealmNullableField<Model : RealmModel> : RealmField<Model> {
@@ -58,7 +58,7 @@ interface RealmEmptyableField<Model : RealmModel> : RealmField<Model> {
 }
 
 interface RealmIndexedField<Model : RealmModel> : RealmField<Model>
-interface RealmSortableField<Model : RealmModel, in Value> : RealmEquatableField<Model, Value>
+interface RealmSortableField<Model : RealmModel> : RealmField<Model>
 
 interface RealmInableField<Model : RealmModel, Value> : RealmField<Model> {
     fun `in`(query: RealmQuery<Model>, values: Array<Value>)

@@ -9,7 +9,7 @@ open class RealmDateField<Model : RealmModel>(override val modelClass: Class<Mod
         RealmField<Model>,
         RealmEquatableField<Model, Date>,
         RealmComparableField<Model, Date>,
-        RealmSortableField<Model, Date>,
+        RealmSortableField<Model>,
         RealmInableField<Model, Date>,
         RealmMinMaxField<Model, Date> {
 

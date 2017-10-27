@@ -8,7 +8,7 @@ import io.realm.RealmQuery
 open class RealmStringField<Model : RealmModel>(override val modelClass: Class<Model>, override val name: String) :
         RealmField<Model>,
         RealmEquatableField<Model, String>,
-        RealmSortableField<Model, String>,
+        RealmSortableField<Model>,
         RealmEmptyableField<Model>,
         RealmInableField<Model, String> {
 

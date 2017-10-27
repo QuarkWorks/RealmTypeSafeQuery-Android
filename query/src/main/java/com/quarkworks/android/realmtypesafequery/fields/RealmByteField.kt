@@ -6,7 +6,7 @@ import io.realm.RealmQuery
 open class RealmByteField<Model : RealmModel>(override val modelClass: Class<Model>, override val name: String) :
         RealmField<Model>,
         RealmEquatableField<Model, Byte>,
-        RealmSortableField<Model, Byte>,
+        RealmSortableField<Model>,
         RealmInableField<Model, Byte> {
 
     override fun equalTo(query: RealmQuery<Model>, value: Byte?) {

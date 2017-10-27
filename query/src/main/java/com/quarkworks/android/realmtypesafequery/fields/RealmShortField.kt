@@ -7,7 +7,7 @@ open class RealmShortField<Model : RealmModel>(override val modelClass: Class<Mo
         RealmField<Model>,
         RealmEquatableField<Model, Short>,
         RealmComparableField<Model, Short>,
-        RealmSortableField<Model, Short>,
+        RealmSortableField<Model>,
         RealmInableField<Model, Short>,
         RealmMinMaxField<Model, Short>,
         RealmAggregatableField<Model, Long> {

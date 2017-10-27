@@ -72,19 +72,21 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
     }
 
     @Nullable
-    public static <M extends RealmModel, V> M findFirst(@NonNull Realm realm, @NonNull RealmSortableField<M, V> field, @Nullable V value, @NonNull Sort sort) {
-        return RealmTypeSafeQuery.with(realm).where(field.getModelClass()).equalTo(field, value).findFirstSorted(field, sort);
+    public static <M extends RealmModel, V, F extends RealmEquatableField<M, V> & RealmSortableField<M>> M findFirst(@NonNull Realm realm, @NonNull F field, @Nullable V value, @NonNull Sort sort) {
+        return RealmTypeSafeQuery.with(realm).where(field.getModelClass()).equalTo(field, value)
+                .findFirstSorted(field, sort);
     }
 
     @NonNull
-    public static <M extends RealmModel, V> RealmResults<M> findAll(@NonNull Realm realm, @NonNull RealmSortableField<M, V> field, @Nullable V value) {
+    public static <M extends RealmModel, V> RealmResults<M> findAll(@NonNull Realm realm, @NonNull RealmEquatableField<M, V> field, @Nullable V value) {
         return new RealmTypeSafeQuery<>(field.getModelClass(), realm)
                 .equalTo(field, value).findAll();
     }
 
     @NonNull
-    public static <M extends RealmModel, V> RealmResults<M> findAll(@NonNull Realm realm, @NonNull RealmSortableField<M, V> field, @Nullable V value, @NonNull Sort sort) {
-        return RealmTypeSafeQuery.with(realm).where(field.getModelClass()).equalTo(field, value).findAllSorted(field, sort);
+    public static <M extends RealmModel, V, F extends RealmEquatableField<M, V> & RealmSortableField<M>> RealmResults<M> findAll(@NonNull Realm realm, @NonNull F field, @Nullable V value, @NonNull Sort sort) {
+        return RealmTypeSafeQuery.with(realm).where(field.getModelClass()).equalTo(field, value)
+                .findAllSorted(field, sort);
     }
 
     @NonNull
@@ -404,17 +406,17 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
     }
 
     @NonNull
-    public RealmResults<Model> findAllSorted(RealmSortableField<Model, ?> field, Sort sort) {
+    public RealmResults<Model> findAllSorted(RealmSortableField<Model> field, Sort sort) {
         return realmQuery.findAllSorted(field.getName(), sort);
     }
 
     @NonNull
-    public RealmResults<Model> findAllSorted(RealmSortableField<Model, ?> field1, Sort sort1, RealmSortableField<Model, ?> field2, Sort sort2) {
+    public RealmResults<Model> findAllSorted(RealmSortableField<Model> field1, Sort sort1, RealmSortableField<Model> field2, Sort sort2) {
         return realmQuery.findAllSorted(field1.getName(), sort1, field2.getName(), sort2);
     }
 
     @NonNull
-    public RealmResults<Model> findAllSorted(RealmSortableField<Model, ?>[] fields, Sort[] sorts) {
+    public RealmResults<Model> findAllSorted(RealmSortableField<Model>[] fields, Sort[] sorts) {
         return realmQuery.findAllSorted(fieldNames(fields), sorts);
     }
 
@@ -428,17 +430,17 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
     }
 
     @Nullable
-    public Model findFirstSorted(RealmSortableField<Model, ?> field, Sort sort) {
+    public Model findFirstSorted(RealmSortableField<Model> field, Sort sort) {
         return findAllSorted(field, sort).first(null);
     }
 
     @Nullable
-    public Model findFirstSorted(RealmSortableField<Model, ?> field1, Sort sort1, RealmSortableField<Model, ?> field2, Sort sort2) {
+    public Model findFirstSorted(RealmSortableField<Model> field1, Sort sort1, RealmSortableField<Model> field2, Sort sort2) {
         return findAllSorted(field1, sort1, field2, sort2).first(null);
     }
 
     @Nullable
-    public Model findFirstSorted(RealmSortableField<Model, ?>[] fields, Sort[] sorts) {
+    public Model findFirstSorted(RealmSortableField<Model>[] fields, Sort[] sorts) {
         return findAllSorted(fields, sorts).first(null);
     }
 
@@ -452,17 +454,17 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
     }
 
     @NonNull
-    public RealmResults<Model> findAllSortedAsync(RealmSortableField<Model, ?> field, Sort sort) {
+    public RealmResults<Model> findAllSortedAsync(RealmSortableField<Model> field, Sort sort) {
         return realmQuery.findAllSortedAsync(field.getName(), sort);
     }
 
     @NonNull
-    public RealmResults<Model> findAllSortedAsync(RealmSortableField<Model, ?> field1, Sort sort1, RealmSortableField<Model, ?> field2, Sort sort2) {
+    public RealmResults<Model> findAllSortedAsync(RealmSortableField<Model> field1, Sort sort1, RealmSortableField<Model> field2, Sort sort2) {
         return realmQuery.findAllSortedAsync(field1.getName(), sort1, field2.getName(), sort2);
     }
 
     @NonNull
-    public RealmResults<Model> findAllSortedAsync(RealmSortableField<Model, ?>[] fields, Sort[] sorts) {
+    public RealmResults<Model> findAllSortedAsync(RealmSortableField<Model>[] fields, Sort[] sorts) {
         return realmQuery.findAllSortedAsync(fieldNames(fields), sorts);
     }
 
@@ -485,7 +487,7 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
      */
 
     @NonNull
-    public SortBuilder<Model> sort(RealmSortableField<Model, ?> field, Sort sort) {
+    public SortBuilder<Model> sort(RealmSortableField<Model> field, Sort sort) {
         return new SortBuilder<>(realmQuery).sort(field, sort);
     }
 
@@ -501,7 +503,7 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
         }
 
         @NonNull
-        public SortBuilder<Model> sort(RealmSortableField<Model, ?> field, Sort sort) {
+        public SortBuilder<Model> sort(RealmSortableField<Model> field, Sort sort) {
             sortParams.add(new Pair<>(field.getName(), sort));
             return this;
         }
