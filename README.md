@@ -1,8 +1,8 @@
 # RealmTypeSafeQuery-Android
 [![](https://jitpack.io/v/QuarkWorks/RealmTypeSafeQuery-Android.svg)](https://jitpack.io/#QuarkWorks/RealmTypeSafeQuery-Android)
 
-###A type safe way to handle realm queries in Android.
-Supports Realm query API 110% (there are some bonus features too ;)
+### A type safe way to handle realm queries in Android.
+Supports Realm query API 110% (there are some bonus features too 😉)
 ```java
 // Bad, field name and type are checked at runtime.
 realm.where(Person.class).equalTo("firstName", "Sally").findFirst();
@@ -14,8 +14,9 @@ realm.where(Person.class).equalTo(PersonFieldNames.FIRST_NAME, "Sally").findFirs
 RealmTypeSafeQuery.with(realm).where(Person.class).equalTo(PersonFields.FIRST_NAME, "Sally").findFirst();
 ```
 
+## How to include
 
-#####In your top level build file, add the jitpack repository
+#### In your top level build file, add the jitpack repository
 ```groovy
 allprojects {
     repositories {
@@ -25,13 +26,13 @@ allprojects {
 }
 ```
 
-#####App module build file dependencies:
+#### App module build file dependencies:
 ```groovy
 annotationProcessor 'com.github.quarkworks.RealmTypeSafeQuery-Android:annotationprocessor:{{version_number}}' // annotation processor
 implementation 'com.github.quarkworks.RealmTypeSafeQuery-Android:query:{{version_number}}'  // query dsl
 ```
 
-####Example Model
+#### Example Model
 ```java
 @GenerateRealmFields // Generates a file called PersonFields.java
 @GenerateRealmFieldNames // Generates a file called PersonFieldNames.java
@@ -57,7 +58,7 @@ class Pet extends RealmObject {
 }
 ```
 
-####Example Queries
+#### Example Queries
 
 ```java
 
@@ -71,11 +72,11 @@ RealmResults<Person> sallyNotSmiths = RealmTypeSafeQuery.with(realm).where(Perso
     
 //Link queries also work too
  
-RealmResutls<Person> peopleWithHeavyPets = RealmTypeSafeQuery.with(realm).where(Person.class)
+RealmResults<Person> peopleWithHeavyPets = RealmTypeSafeQuery.with(realm).where(Person.class)
     .greaterThan(PersonFields.PETS.link(PetFields.WEIGHT), 9000).findAll();
 ```
 
-####Bonus
+#### Bonus
  
 ```java
 // For chainable sorting 
