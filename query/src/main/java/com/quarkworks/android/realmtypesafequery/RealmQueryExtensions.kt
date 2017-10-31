@@ -36,6 +36,11 @@ fun <T : RealmModel, V> RealmQuery<T>.`in`(field: RealmInableField<T, V>, value:
     return this
 }
 
+fun <T : RealmModel, V> RealmQuery<T>.`in`(field: RealmInableField<T, V>, value: List<V>) : RealmQuery<T> {
+    field.`in`(this, value)
+    return this
+}
+
 /*
     String
 */

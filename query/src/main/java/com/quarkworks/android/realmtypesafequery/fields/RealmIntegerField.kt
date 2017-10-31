@@ -84,6 +84,10 @@ open class RealmIntegerField<Model : RealmModel>(override val modelClass: Class<
         query.`in`(name, values)
     }
 
+    override fun `in`(query: RealmQuery<Model>, values: List<Int>) {
+        query.`in`(name, values.toTypedArray())
+    }
+
     override fun min(query: RealmQuery<Model>): Int? = query.min(name)?.toInt()
 
     override fun max(query: RealmQuery<Model>): Int? = query.max(name)?.toInt()

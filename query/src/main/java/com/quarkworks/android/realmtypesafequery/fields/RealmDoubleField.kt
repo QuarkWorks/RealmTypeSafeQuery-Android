@@ -82,6 +82,10 @@ class RealmDoubleField<Model : RealmModel>(override val modelClass: Class<Model>
         query.`in`(name, values)
     }
 
+    override fun `in`(query: RealmQuery<Model>, values: List<Double>) {
+        query.`in`(name, values.toTypedArray())
+    }
+
     override fun min(query: RealmQuery<Model>): Double? = query.min(name)?.toDouble()
 
     override fun max(query: RealmQuery<Model>): Double? = query.max(name)?.toDouble()

@@ -82,6 +82,10 @@ class RealmFloatField<Model : RealmModel>(override val modelClass: Class<Model>,
         query.`in`(name, values)
     }
 
+    override fun `in`(query: RealmQuery<Model>, values: List<Float>) {
+        query.`in`(name, values.toTypedArray())
+    }
+
     override fun min(query: RealmQuery<Model>): Float? = query.min(name)?.toFloat()
 
     override fun max(query: RealmQuery<Model>): Float? = query.max(name)?.toFloat()

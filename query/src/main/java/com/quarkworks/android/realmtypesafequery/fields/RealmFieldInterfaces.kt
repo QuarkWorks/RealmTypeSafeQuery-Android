@@ -62,6 +62,7 @@ interface RealmSortableField<Model : RealmModel> : RealmField<Model>
 
 interface RealmInableField<Model : RealmModel, Value> : RealmField<Model> {
     fun `in`(query: RealmQuery<Model>, values: Array<Value>)
+    fun `in`(query: RealmQuery<Model>, values: List<Value>)
 }
 
 interface RealmDistinctableField<Model : RealmModel> : RealmField<Model> {

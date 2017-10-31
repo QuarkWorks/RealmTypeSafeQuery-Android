@@ -38,8 +38,16 @@ open class RealmStringField<Model : RealmModel>(override val modelClass: Class<M
         query.`in`(name, values)
     }
 
+    override fun `in`(query: RealmQuery<Model>, values: List<String>) {
+        query.`in`(name, values.toTypedArray())
+    }
+
     fun `in`(query: RealmQuery<Model>, values: Array<String>, casing: Case) {
         query.`in`(name, values, casing)
+    }
+
+    fun `in`(query: RealmQuery<Model>, values: List<String>, casing: Case) {
+        query.`in`(name, values.toTypedArray(), casing)
     }
 
     fun equalTo(query: RealmQuery<Model>, value: String?, casing: Case) {

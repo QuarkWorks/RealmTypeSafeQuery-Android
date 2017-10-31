@@ -34,4 +34,8 @@ open class RealmBooleanField<Model : RealmModel>(override val modelClass: Class<
     override fun `in`(query: RealmQuery<Model>, values: Array<Boolean>) {
         query.`in`(name, values)
     }
+
+    override fun `in`(query: RealmQuery<Model>, values: List<Boolean>) {
+        query.`in`(name, values.toTypedArray())
+    }
 }

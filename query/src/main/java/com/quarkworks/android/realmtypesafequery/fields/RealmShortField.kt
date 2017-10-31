@@ -82,6 +82,10 @@ open class RealmShortField<Model : RealmModel>(override val modelClass: Class<Mo
         query.`in`(name, values)
     }
 
+    override fun `in`(query: RealmQuery<Model>, values: List<Short>) {
+        query.`in`(name, values.toTypedArray())
+    }
+
     override fun min(query: RealmQuery<Model>): Short? = query.min(name)?.toShort()
 
     override fun max(query: RealmQuery<Model>): Short? = query.max(name)?.toShort()

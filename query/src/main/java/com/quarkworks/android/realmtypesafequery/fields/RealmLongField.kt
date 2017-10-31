@@ -82,6 +82,10 @@ open class RealmLongField<Model : RealmModel>(override val modelClass: Class<Mod
         query.`in`(name, values)
     }
 
+    override fun `in`(query: RealmQuery<Model>, values: List<Long>) {
+        query.`in`(name, values.toTypedArray())
+    }
+
     override fun min(query: RealmQuery<Model>): Long? = query.min(name)?.toLong()
 
     override fun max(query: RealmQuery<Model>): Long? = query.max(name)?.toLong()

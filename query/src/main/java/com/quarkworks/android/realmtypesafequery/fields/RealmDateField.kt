@@ -83,6 +83,10 @@ open class RealmDateField<Model : RealmModel>(override val modelClass: Class<Mod
         query.`in`(name, values)
     }
 
+    override fun `in`(query: RealmQuery<Model>, values: List<Date>) {
+        query.`in`(name, values.toTypedArray())
+    }
+
     override fun min(query: RealmQuery<Model>): Date? = query.minimumDate(name)
 
     override fun max(query: RealmQuery<Model>): Date? = query.maximumDate(name)

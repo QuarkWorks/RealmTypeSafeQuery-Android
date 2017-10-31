@@ -155,6 +155,12 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
         return this;
     }
 
+    @NonNull
+    public final <V> RealmTypeSafeQuery<Model> in(@NonNull RealmInableField<Model, V> field, List<V> values) {
+        field.in(realmQuery, values);
+        return this;
+    }
+
     /*
         String
     */

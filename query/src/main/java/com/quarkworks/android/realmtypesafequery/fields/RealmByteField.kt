@@ -34,4 +34,8 @@ open class RealmByteField<Model : RealmModel>(override val modelClass: Class<Mod
     override fun `in`(query: RealmQuery<Model>, values: Array<Byte>) {
         query.`in`(name, values)
     }
+
+    override fun `in`(query: RealmQuery<Model>, values: List<Byte>) {
+        query.`in`(name, values.toTypedArray())
+    }
 }
