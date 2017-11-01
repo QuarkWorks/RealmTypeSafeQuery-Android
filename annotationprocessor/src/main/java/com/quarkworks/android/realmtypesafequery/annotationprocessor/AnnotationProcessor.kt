@@ -36,7 +36,7 @@ import io.realm.annotations.PrimaryKey
 
 
 @AutoService(Processor::class)
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
 class AnnotationProcessor : AbstractProcessor() {
 
     private fun String.toConstId() : String = this.replace("([a-z])([A-Z])".toRegex(), "$1_$2").toUpperCase()
