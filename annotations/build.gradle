@@ -4,6 +4,6 @@ apply plugin: 'maven' // jitpack.io
 group='com.github.quarkworks' // jitpack.io
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 

@@ -64,7 +64,7 @@ public class BaseTestRecord implements RealmModel {
     public String primaryKey;
 
     @Required @NonNull
-    public String requiredField = RealmDefaults.STRING;
+    public String requiredField = "";
 
     @Nullable
     public BaseTestRecord parent = null;
