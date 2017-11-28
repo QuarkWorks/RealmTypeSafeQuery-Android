@@ -28,6 +28,7 @@ allprojects {
 
 #### App module build file dependencies:
 ```groovy
+compileOnly 'com.github.quarkworks.RealmTypeSafeQuery-Android:annotations:{{version_number}}' // annotations
 annotationProcessor 'com.github.quarkworks.RealmTypeSafeQuery-Android:annotationprocessor:{{version_number}}' // annotation processor
 implementation 'com.github.quarkworks.RealmTypeSafeQuery-Android:query:{{version_number}}'  // query dsl
 ```

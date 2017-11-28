@@ -28,7 +28,8 @@ dependencies {
     })
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     testImplementation 'junit:junit:4.12'
+
     androidTestAnnotationProcessor project(':annotationprocessor')
     androidTestImplementation project(':query')
-    androidTestImplementation project(':annotations')
+    androidTestCompileOnly project(':annotations')
 }

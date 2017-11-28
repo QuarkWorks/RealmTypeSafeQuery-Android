@@ -32,7 +32,6 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':annotations')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     compileOnly "com.android.support:support-annotations:$support_library_version"
     compileOnly "io.realm:realm-android-library:$realm_version"
