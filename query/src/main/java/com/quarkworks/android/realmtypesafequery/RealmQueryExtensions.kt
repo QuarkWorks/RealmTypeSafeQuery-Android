@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.quarkworks.android.realmtypesafequery
 
 import com.quarkworks.android.realmtypesafequery.fields.*
