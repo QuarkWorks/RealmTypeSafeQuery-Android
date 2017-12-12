@@ -176,39 +176,14 @@ fun <T : RealmModel, V> RealmQuery<T>.min(field: RealmMinMaxField<T, V>) : V? = 
 fun <T : RealmModel, V> RealmQuery<T>.max(field: RealmMinMaxField<T, V>) : V? = field.max(this)
 
 /*
-    Results
- */
-fun <T : RealmModel> RealmQuery<T>.findAllSorted(field: RealmSortableField<T>, sort: Sort) : RealmResults<T> =
-        findAllSorted(field.name, sort)
+    Sorting
+*/
 
-fun <T : RealmModel> RealmQuery<T>.findAllSorted(field1: RealmSortableField<T>, sort1: Sort, field2: RealmSortableField<T>, sort2: Sort) : RealmResults<T> =
-        findAllSorted(field1.name, sort1, field2.name, sort2)
+fun <T : RealmModel> RealmQuery<T>.sort(field: RealmSortableField<T>, sortOrder: Sort) : RealmSortedQuery<T> =
+        RealmSortedQuery(this).sort(field, sortOrder)
 
-fun <T : RealmModel> RealmQuery<T>.findAllSorted(fields: Array<RealmSortableField<T>>, sorts: Array<Sort>) : RealmResults<T> =
-        findAllSorted(fields.map { it.name }.toTypedArray(), sorts)
+fun <T : RealmModel> RealmQuery<T>.sort(field1: RealmSortableField<T>, sortOrder1: Sort, field2: RealmSortableField<T>, sortOrder2: Sort) : RealmSortedQuery<T> =
+        RealmSortedQuery(this).sort(field1, sortOrder1).sort(field2, sortOrder2)
 
-/*
-    Find First
- */
-
-fun <T : RealmModel> RealmQuery<T>.findFirstSorted(field: RealmSortableField<T>, sort: Sort) : T? =
-        findAllSorted(field, sort).first(null)
-
-fun <T : RealmModel> RealmQuery<T>.findFirstSorted(field1: RealmSortableField<T>, sort1: Sort, field2: RealmSortableField<T>, sort2: Sort) : T? =
-        findAllSorted(field1, sort1, field2, sort2).first(null)
-
-fun <T : RealmModel> RealmQuery<T>.findFirstSorted(fields: Array<RealmSortableField<T>>, sorts: Array<Sort>) : T? =
-        findAllSorted(fields, sorts).first(null)
-
-/*
-    Async
- */
-
-fun <T : RealmModel> RealmQuery<T>.findAllSortedAsync(field: RealmSortableField<T>, sort: Sort) : RealmResults<T> =
-        findAllSortedAsync(field.name, sort)
-
-fun <T : RealmModel> RealmQuery<T>.findAllSortedAsync(field1: RealmSortableField<T>, sort1: Sort, field2: RealmSortableField<T>, sort2: Sort) : RealmResults<T> =
-        findAllSortedAsync(field1.name, sort1, field2.name, sort2)
-
-fun <T : RealmModel> RealmQuery<T>.findAllSortedAsync(fields: Array<RealmSortableField<T>>, sorts: Array<Sort>) : RealmResults<T> =
-        findAllSortedAsync(fields.map { it.name }.toTypedArray(), sorts)
+fun <T : RealmModel> RealmQuery<T>.sort(fields: Array<RealmSortableField<T>>, sortOrders: Array<Sort>) : RealmSortedQuery<T> =
+        RealmSortedQuery(this).sort(fields, sortOrders)
