@@ -6,7 +6,8 @@ import org.junit.rules.ErrorCollector;
  * Created by james on 12/13/2016.
  * add the obvious
  */
-class MyErrCol extends ErrorCollector {
+class DeferredErrorCollector extends ErrorCollector {
+
     void checkSucceeds(Runnable runnable) {
         try {
             runnable.run();

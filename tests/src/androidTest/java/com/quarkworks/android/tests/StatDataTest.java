@@ -17,12 +17,15 @@ import io.realm.RealmConfiguration;
 import io.realm.Sort;
 
 import android.support.test.InstrumentationRegistry;
+import android.util.Log;
 
 import com.quarkworks.android.realmtypesafequery.RealmTypeSafeQuery;
 import com.quarkworks.android.realmtypesafequery.generated.StatDataFields;
 import com.quarkworks.android.tests.models.StatData;
 
 import org.junit.Assert;
+
+import static org.junit.Assert.assertEquals;
 
 @SuppressWarnings("ConstantConditions")
 @RunWith(AndroidJUnit4.class)
@@ -33,8 +36,7 @@ public class StatDataTest {
     @BeforeClass
     public static void setUpClass() {
         Realm.init(InstrumentationRegistry.getTargetContext());
-        RealmConfiguration config =
-                new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
+        final RealmConfiguration config = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
         Realm.setDefaultConfiguration(config);
         defaultInstance = Realm.getDefaultInstance();
         defaultInstance.beginTransaction();
@@ -52,14 +54,14 @@ public class StatDataTest {
 
 
     public static void initRecords() {
-        ArrayList<Object[]> data = new ArrayList<>(Arrays.asList(StatData.DATA));
-        ListIterator<Object[]> dli = data.listIterator();
-        while (dli.hasNext()) {
-            if (dli.nextIndex() == StatData.AVG_DATA_INDEX)
+        final ArrayList<Object[]> data = new ArrayList<>(Arrays.asList(StatData.DATA));
+        final ListIterator<Object[]> iterator = data.listIterator();
+        while (iterator.hasNext()) {
+            if (iterator.nextIndex() == StatData.AVG_DATA_INDEX)
                 break;
-            Object[] vals = dli.next();
-            StatData record = defaultInstance.createObject(StatData.class);
-            initRecord(vals, record);
+            final Object[] values = iterator.next();
+            final StatData record = defaultInstance.createObject(StatData.class);
+            initRecord(values, record);
         }
     }
 
@@ -72,42 +74,40 @@ public class StatDataTest {
 
     @Test
     public void sumInt() {
-        long sum = (RealmTypeSafeQuery.with(defaultInstance).where(StatData.class)
+        final long sum = (RealmTypeSafeQuery.with(defaultInstance).where(StatData.class)
                 .sum(StatDataFields.INTEGER_FIELD));
-        //Assert.assertEquals(sum, StatData.DATA[StatData.SUM_DATA_INDEX][0]);
-        Assert.assertEquals(sum, StatData.SUM_DATA[0]);
+        assertEquals(StatData.SUM_DATA[0], sum);
 
     }
 
     @Test
     public void avgInt() {
-        int average = (int) (RealmTypeSafeQuery.with(defaultInstance).where(StatData.class)
+        final int average = (int) (RealmTypeSafeQuery.with(defaultInstance).where(StatData.class)
                 .average(StatDataFields.INTEGER_FIELD));
-        //Assert.assertEquals(average, StatData.DATA[StatData.AVG_DATA_INDEX][0]);
-        Assert.assertEquals(average, StatData.AVG_DATA[0]);
+        assertEquals(StatData.AVG_DATA[0], average);
 
     }
 
     @Test
     public void maxInt() {
-        int max = RealmTypeSafeQuery.with(defaultInstance).where(StatData.class)
+        final int max = RealmTypeSafeQuery.with(defaultInstance).where(StatData.class)
                 .max(StatDataFields.INTEGER_FIELD);
-        //Assert.assertEquals(max, StatData.DATA[StatData.MAX_DATA_INDEX][0]);
-        Assert.assertEquals(max, StatData.MAX_DATA[0]);
+        assertEquals(StatData.MAX_DATA[0], max);
 
     }
 
     @Test
     public void minInt() {
-        int min = RealmTypeSafeQuery.with(defaultInstance).where(StatData.class)
+        final int min = RealmTypeSafeQuery.with(defaultInstance).where(StatData.class)
                 .min(StatDataFields.INTEGER_FIELD);
-        //Assert.assertEquals(min, (StatData.DATA[StatData.MIN_DATA_INDEX][0]));
-        Assert.assertEquals(min, StatData.MIN_DATA[0]);
+        assertEquals(StatData.MIN_DATA[0], min);
     }
     @Test
     public void sortAscending() {
-        StatData min = RealmTypeSafeQuery.with(defaultInstance).where(StatData.class)
+        final StatData min = RealmTypeSafeQuery.with(defaultInstance).where(StatData.class)
                 .sort(StatDataFields.STRING_FIELD, Sort.ASCENDING).findFirst();
-        Assert.assertEquals(min.stringField, StatData.MIN_DATA[2]);
+        Log.d("BUTTS", min.stringField);
+
+        assertEquals(StatData.MIN_DATA[2], min.stringField);
     }
 }

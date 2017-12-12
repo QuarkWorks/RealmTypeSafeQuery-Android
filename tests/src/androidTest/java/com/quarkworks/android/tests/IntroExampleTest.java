@@ -10,6 +10,7 @@ import com.quarkworks.android.realmtypesafequery.generated.PersonFields;
 import com.quarkworks.android.tests.models.Cat;
 import com.quarkworks.android.tests.models.Person;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -27,15 +28,12 @@ import static org.junit.Assert.assertNotNull;
 public class IntroExampleTest {
 
     @SuppressLint("StaticFieldLeak")
-    private static Realm defaultInstance;
-    private final Realm.Transaction delete_all = new Realm.Transaction() {
-        @Override
-        public void execute(Realm realm) {
-            realm.deleteAll();
-        }
-    };
+    private static Realm realm;
+
+    private static final Realm.Transaction deleteAllTransaction = realm -> realm.deleteAll();
+
     @Rule
-    public MyErrCol collector = new MyErrCol();
+    public DeferredErrorCollector collector = new DeferredErrorCollector();
     public void checkSucceeds(Runnable[] commands) {
         for (Runnable r : commands) {
             collector.checkSucceeds(r);
@@ -45,100 +43,80 @@ public class IntroExampleTest {
     @BeforeClass
     public static void setUpClass() {
         Realm.init(getTargetContext());
-        RealmConfiguration config =
-                new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
+        final RealmConfiguration config = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
         Realm.setDefaultConfiguration(config);
-        defaultInstance = Realm.getDefaultInstance();
-        defaultInstance.beginTransaction();
-        defaultInstance.deleteAll();
-        defaultInstance.commitTransaction();
+        realm = Realm.getDefaultInstance();
+        realm.executeTransaction(deleteAllTransaction);
 
     }
 
     @AfterClass
     public static void tearDownClass() {
-        defaultInstance.close();
-        defaultInstance = null;
+        realm.close();
+        realm = null;
+    }
+
+    @After
+    public void tearDown() {
+        realm.executeTransaction(deleteAllTransaction);
     }
 
     @Test
     public void basicLinkQuery() {
         //Performing basic Link Query operation...
         // All writes must be wrapped in a transaction to facilitate safe multi threading
-        defaultInstance.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                // Add two people and two cats
-                Person person = realm.createObject(Person.class);
-                person.setId(1);
-                person.setName("Young Person");
-                person.setAge(14);
-                Cat cat = realm.createObject(Cat.class);
-                cat.name = "Ralf";
-                person.getCats().add(cat);
-                person = realm.createObject(Person.class);
-                person.setId(2);
-                person.setName("Senior Person");
-                person.setAge(99);
-                cat = realm.createObject(Cat.class);
-                cat.name = "Tiger";
-                person.getCats().add(cat);
-            }
+        realm.executeTransaction(realm -> {
+            // Add two people and two cats
+            Person person = realm.createObject(Person.class);
+            person.setId(1);
+            person.setName("Young Person");
+            person.setAge(14);
+            Cat cat = realm.createObject(Cat.class);
+            cat.name = "Ralf";
+            person.getCats().add(cat);
+            person = realm.createObject(Person.class);
+            person.setId(2);
+            person.setName("Senior Person");
+            person.setAge(99);
+            cat = realm.createObject(Cat.class);
+            cat.name = "Tiger";
+            person.getCats().add(cat);
         });
-        Runnable[] cmds = {
-                new Runnable() {
-                    public void run() {
-                        assertEquals(
-                                RealmTypeSafeQuery.with(defaultInstance).where(Cat.class).count(), 2
-                        );
-                    }
-                },
-                new Runnable() {
-                    public void run() {
-                        assertEquals(
-                                RealmTypeSafeQuery.with(defaultInstance).where(Person.class)
-                                        .equalTo(PersonFields.CATS.link(CatFields.NAME), "Tiger")
-                                        .count(), 1
-                        );
-                    }
-                }
+        Runnable[] commands = {
+                () -> assertEquals(
+                        RealmTypeSafeQuery.with(realm).where(Cat.class).count(), 2
+                ),
+                () -> assertEquals(
+                        RealmTypeSafeQuery.with(realm).where(Person.class)
+                                .equalTo(PersonFields.CATS.link(CatFields.NAME), "Tiger")
+                                .count(), 1
+                )
         };
-        checkSucceeds(cmds);
-        defaultInstance.executeTransaction(delete_all);
+        checkSucceeds(commands);
     }
 
     @Test
     public void basicQuery() {
         //Performing basic Query operation...
         // All writes must be wrapped in a transaction to facilitate safe multi threading
-        defaultInstance.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                // Add two people
-                Person person = realm.createObject(Person.class);
-                person.setId(1);
-                person.setName("Young Person");
-                person.setAge(14);
-                person = realm.createObject(Person.class);
-                person.setId(2);
-                person.setName("Senior Person");
-                person.setAge(99);
-            }
+        realm.executeTransaction(realm -> {
+            // Add two people
+            Person person = realm.createObject(Person.class);
+            person.setId(1);
+            person.setName("Young Person");
+            person.setAge(14);
+            person = realm.createObject(Person.class);
+            person.setId(2);
+            person.setName("Senior Person");
+            person.setAge(99);
         });
-        Runnable[] cmds = {
-        new Runnable() {
-            public void run() {
-                assertEquals(RealmTypeSafeQuery.with(defaultInstance).where(Person.class).count(), 2);
-            }
-        },
-        new Runnable() {
-            public void run() {
-                assertEquals(RealmTypeSafeQuery.with(defaultInstance)
-                        .where(Person.class).equalTo(PersonFields.AGE, 99).findAll().size(), 1);
-            }
-        }};
-        checkSucceeds(cmds);
-        defaultInstance.executeTransaction(delete_all);
+
+        Runnable[] commands = {
+                () -> assertEquals(RealmTypeSafeQuery.with(realm).where(Person.class).count(), 2),
+                () -> assertEquals(RealmTypeSafeQuery.with(realm)
+                        .where(Person.class).equalTo(PersonFields.AGE, 99).findAll().size(), 1)};
+
+        checkSucceeds(commands);
     }
 
     @Test
@@ -147,65 +125,35 @@ public class IntroExampleTest {
         //Perform basic Create/Read/Update/Delete (CRUD) operations...
 
         // All writes must be wrapped in a transaction to facilitate safe multi threading
-        defaultInstance.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                // Add a person
-                Person person = realm.createObject(Person.class);
-                person.setId(1);
-                person.setName("Young Person");
-                person.setAge(14);
-            }
+        realm.executeTransaction(realm -> {
+            // Add a person
+            Person person = realm.createObject(Person.class);
+            person.setId(1);
+            person.setName("Young Person");
+            person.setAge(14);
         });
         // Find the first person (no query conditions) and read a field
-        final Person person = RealmTypeSafeQuery.with(defaultInstance).where(Person.class).findFirst();
+        final Person person = RealmTypeSafeQuery.with(realm).where(Person.class).findFirst();
         assert person != null;
         Runnable[] commands = {
-                new Runnable() {
-                    public void run() {
-                        assertNotNull(person);
-                    }
-                },
-                new Runnable() {
-                    public void run() {
-                        assertEquals(person.getName(), "Young Person");
-                    }
-                },
-                new Runnable() {
-                    public void run() {
-                        assertEquals(person.getAge(), 14);
-                    }
-                }
+                () -> assertNotNull(person),
+                () -> assertEquals(person.getName(), "Young Person"),
+                () -> assertEquals(person.getAge(), 14)
         };
         checkSucceeds(commands);
 
         // Update person in a transaction
-        defaultInstance.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                //noinspection ConstantConditions
-                person.setName("Senior Person");
-                person.setAge(99);
-            }
+        realm.executeTransaction(realm -> {
+            //noinspection ConstantConditions
+            person.setName("Senior Person");
+            person.setAge(99);
         });
 
         commands = new Runnable[]{
-                new Runnable() {
-                    public void run() {
-                        assertNotNull(person);
-                    }
-                },
-                new Runnable() {
-                    public void run() {
-                        assertEquals(person.getName(), "Senior Person");
-                    }
-                },
-                new Runnable() {
-                    public void run() {assertEquals(person.getAge(), 99);
-                    }
-                }
+                () -> assertNotNull(person),
+                () -> assertEquals(person.getName(), "Senior Person"),
+                () -> assertEquals(person.getAge(), 99)
         };
         checkSucceeds(commands);
-        defaultInstance.executeTransaction(delete_all);
     }
 }
