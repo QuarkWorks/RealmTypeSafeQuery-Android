@@ -21,7 +21,7 @@ import io.realm.Sort;
 @SuppressWarnings("WeakerAccess")
 public final class RealmSortedQuery<Model extends RealmModel> {
 
-    public static class SortParams {
+    private static class SortParams {
 
         public final String[] fieldNames;
         public final Sort[] sortOrders;
@@ -40,6 +40,10 @@ public final class RealmSortedQuery<Model extends RealmModel> {
     protected RealmSortedQuery(@NonNull RealmQuery<Model> realmQuery) {
         this.realmQuery = realmQuery;
     }
+
+    /*
+        Sorts
+     */
 
     @NonNull
     public RealmSortedQuery<Model> sort(RealmSortableField<Model> field, Sort sortOrder) {
@@ -60,19 +64,9 @@ public final class RealmSortedQuery<Model extends RealmModel> {
         return this;
     }
 
-    @NonNull
-    protected SortParams getSortParams() {
-        final String[] fieldNames = new String[sortParams.size()];
-        final Sort[] sortOrders = new Sort[sortParams.size()];
-
-        for (int i = 0; i < sortParams.size(); i++) {
-            Pair<String, Sort> pair = sortParams.get(i);
-            fieldNames[i] = pair.first;
-            sortOrders[i] = pair.second;
-        }
-
-        return new SortParams(fieldNames, sortOrders);
-    }
+    /*
+        Results
+     */
 
     @NonNull
     public RealmResults<Model> findAll() {
@@ -90,5 +84,19 @@ public final class RealmSortedQuery<Model extends RealmModel> {
     public RealmResults<Model> findAllAsync() {
         final SortParams sortParams = getSortParams();
         return realmQuery.sort(sortParams.fieldNames, sortParams.sortOrders).findAllAsync();
+    }
+
+    @NonNull
+    private SortParams getSortParams() {
+        final String[] fieldNames = new String[sortParams.size()];
+        final Sort[] sortOrders = new Sort[sortParams.size()];
+
+        for (int i = 0; i < sortParams.size(); i++) {
+            Pair<String, Sort> pair = sortParams.get(i);
+            fieldNames[i] = pair.first;
+            sortOrders[i] = pair.second;
+        }
+
+        return new SortParams(fieldNames, sortOrders);
     }
 }
