@@ -1,6 +1,7 @@
 # RealmTypeSafeQuery-Android
 [![](https://jitpack.io/v/QuarkWorks/RealmTypeSafeQuery-Android.svg)](https://jitpack.io/#QuarkWorks/RealmTypeSafeQuery-Android)
 
+
 ### A type safe way to handle realm queries in Android.
 Supports Realm query API 110% (there are some bonus features too 😉)
 ```java
@@ -18,6 +19,12 @@ RealmTypeSafeQuery.with(realm).where(Person.class).equalTo(PersonFields.FIRST_NA
 
 #### In your top level build file, add the jitpack repository
 ```groovy
+buildscript {
+    dependencies {
+            classpath "io.realm:realm-gradle-plugin:4.3.1" // supported version of realm
+    }
+}
+
 allprojects {
     repositories {
         jcenter()
@@ -28,6 +35,8 @@ allprojects {
 
 #### App module build file dependencies:
 ```groovy
+apply plugin: 'realm-android' // realm setup
+
 compileOnly 'com.github.quarkworks.RealmTypeSafeQuery-Android:annotations:{{version_number}}' // annotations
 annotationProcessor 'com.github.quarkworks.RealmTypeSafeQuery-Android:annotationprocessor:{{version_number}}' // annotation processor
 implementation 'com.github.quarkworks.RealmTypeSafeQuery-Android:query:{{version_number}}'  // query dsl
