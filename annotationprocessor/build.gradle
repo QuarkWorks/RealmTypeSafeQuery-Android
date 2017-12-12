@@ -19,8 +19,10 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':annotations')
     implementation "io.realm:realm-annotations:$realm_version"
-    kapt "com.google.auto.service:auto-service:1.0-rc2"
-    compileOnly "com.google.auto.service:auto-service:1.0-rc2"
+
+    kapt "com.google.auto.service:auto-service:1.0-rc2" // don't update yet, won't auto generate code
+    compileOnly "com.google.auto.service:auto-service:1.0-rc2" // don't update yet, won't auto generate code
+
     implementation 'com.squareup:javapoet:1.9.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
@@ -45,8 +47,7 @@ import javax.lang.model.element.Modifier
 task compileKotlin.doFirst {
     ext.GIT_COMMIT = System.getenv()['GIT_COMMIT'] ?: "Not Set"
 
-    if (ext.GIT_COMMIT != null)
-    {
+    if (ext.GIT_COMMIT != null) {
         def fs = FieldSpec.builder(TypeName.get(String.class), "val", Modifier.STATIC)
                 .initializer('$S', ext.GIT_COMMIT).build()
         def ts = TypeSpec.classBuilder("GIT_COMMIT").addField(fs).build()
