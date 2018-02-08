@@ -4,8 +4,18 @@
 
 ### A type safe way to handle realm queries in Android.
 Supports Realm query API 110% (there are some bonus features too 😉)
+
+There are two big issues when working with Realm Queries.
+1) If a field name is spelled incorectly it failes at runtime instead of compile time.
+2) If an argument is an incorect type (Date instead of String) then the query fails at runtime instead of compile time.
+
+If you have typesafe query paramaters that allows you to refactor your models without worry of breaking your queries.
+All the field descriptors are auto generated using annotatio proccess so you can't make a mistake. 
+If you do, then it is caught at compile time and your app won't compile until you fix it.
+
+### Here is some java code highlighting what the API looks like
 ```java
-// Bad, field name and type are checked at runtime.
+// Bad, field name and type are checked at runtime. This is using Relam the defualt way.
 realm.where(Person.class).equalTo("firstName", "Sally").findFirst();
 
 // Better, field name is checked at compile time, but type is still at runtime.
@@ -17,7 +27,7 @@ RealmTypeSafeQuery.with(realm).where(Person.class).equalTo(PersonFields.FIRST_NA
 
 ## How to include
 
-#### In your top level build file, add the jitpack repository
+#### In your top level build file, add the jitpack repository along with realm
 ```groovy
 buildscript {
     dependencies {
@@ -28,24 +38,31 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
-        maven { url "https://jitpack.io" } // needed to import RTSQ
+        maven { url "https://jitpack.io" } // RTSQ is hosted on jitpack
     }
 }
 ```
 
 #### App module build file dependencies:
 ```groovy
-apply plugin: 'realm-android' // realm setup
+apply plugin: 'realm-android' // realm setup at top of file
 
-compileOnly 'com.github.quarkworks.RealmTypeSafeQuery-Android:annotations:{{version_number}}' // annotations
-annotationProcessor 'com.github.quarkworks.RealmTypeSafeQuery-Android:annotationprocessor:{{version_number}}' // annotation processor
-implementation 'com.github.quarkworks.RealmTypeSafeQuery-Android:query:{{version_number}}'  // query dsl
+// requires java 8
+compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+}
+
+dependencies {
+    compileOnly 'com.github.quarkworks.RealmTypeSafeQuery-Android:annotations:{{version_number}}' // annotations
+    annotationProcessor 'com.github.quarkworks.RealmTypeSafeQuery-Android:annotationprocessor:{{version_number}}' // annotation processor
+    implementation 'com.github.quarkworks.RealmTypeSafeQuery-Android:query:{{version_number}}'  // query dsl
 ```
 
 #### Example Model
 ```java
-@GenerateRealmFields // Generates a file called PersonFields.java
-@GenerateRealmFieldNames // Generates a file called PersonFieldNames.java
+@GenerateRealmFields // Generates a file called PersonFields.java. This is a RTSQ annotation.
+@GenerateRealmFieldNames // Generates a file called PersonFieldNames.java This is a RTSQ annotation.
 class Person extends RealmObject {
     String firstName;
     String lastName;
@@ -53,15 +70,15 @@ class Person extends RealmObject {
     
     RealmList<Pet> pets;
     
-    // If what pops out of the code generator doesn't compile add these annotations
-    // Realm constantly updates their api and RTSQ might be a little behind
+    // If what pops out of the code generator doesn't compile add these annotations.
+    // Realm constantly updates their api and RTSQ might be a little behind.
     @SkipGenerationOfRealmFieldNames
     @SkipGenerationOfRealmField  
     RealmList<String> website;
 }
 
-@GenerateRealmFields // Generates a file called PetFields.java
-@GenerateRealmFieldNames // Generates a file called PetFieldNames.java
+@GenerateRealmFields // Generates a file called PetFields.java.
+@GenerateRealmFieldNames // Generates a file called PetFieldNames.java.
 class Pet extends RealmObject {
     String name;
     Integer weight;
@@ -72,7 +89,7 @@ class Pet extends RealmObject {
 
 ```java
 
-Realm realm = Realm.getInstance();
+final Realm realm = ...
 
 RealmResults<Person> sallyNotSmiths = RealmTypeSafeQuery.with(realm).where(Person.class)
     .equalTo(PersonFields.FIRST_NAME, "Sally")
@@ -89,13 +106,17 @@ RealmResults<Person> peopleWithHeavyPets = RealmTypeSafeQuery.with(realm).where(
 #### Bonus
  
 ```java
+
+final Realm realm = ...
+
 // For chainable sorting 
-RealmTypeSafeQuery.with(realm).where(model).sort(field1).sort(field3).sort(field2).findAll();
+RealmTypeSafeQuery.with(realm).where(ExampleModel.class).sort(field1).sort(field3).sort(field2).findAll();
 
 // For creating query groups with lambdas
-RealmTypeSafeQuery.with(realm).where(model).with(realm).where(model).group((query) -> {}).findAll();
-RealmTypeSafeQuery.with(realm).where(model).or((query) -> {}).findAll();
+RealmTypeSafeQuery.with(realm).where(ExampleModel.class).group((query) -> {}).findAll();
+RealmTypeSafeQuery.with(realm).where(ExampleModel.class).or((query) -> {}).findAll();
   
 // For those pesky CSV fields that have a delimiter
-RealmTypeSafeQuery.with(realm).where(model).contains(field, value, delemiter).findAll();  
+final String delemiter = ",";
+RealmTypeSafeQuery.with(realm).where(ExampleModel.class).contains(field, value, delemiter).findAll();  
 ```
