@@ -172,18 +172,20 @@ class AnnotationProcessor : AbstractProcessor() {
             if (element !is TypeElement) continue
 
             val variableElements = ElementFilter.fieldsIn(element.enclosedElements)
+            val fieldSpecs = LinkedList<FieldSpec>()
 
-            // ignore static and @Ignore fields
-            val realmFieldClassFSpecs = variableElements.filter {
-                !it.modifiers.contains(Modifier.STATIC) &&
-                                !it.isAnnotatedWith(Ignore::class.java) &&
-                                !it.isAnnotatedWith(SkipGenerationOfRealmField::class.java)
-            }.mapTo(LinkedList()) { makeFieldSpec(element, it) }
+            for (realmField in variableElements) {
+                if (realmField.modifiers.contains(Modifier.STATIC)) continue
+                if (realmField.isAnnotatedWith(Ignore::class.java)) continue
+                if (realmField.isAnnotatedWith(SkipGenerationOfRealmField::class.java)) continue
+
+                fieldSpecs.add(makeFieldSpec(element, realmField))
+            }
 
             val className = element.simpleName.toString() + "Fields"
 
             val typeSpec = TypeSpec.classBuilder(className)
-                    .addFields(realmFieldClassFSpecs)
+                    .addFields(fieldSpecs)
                     .addModifiers(Modifier.PUBLIC)
                     .build()
 
