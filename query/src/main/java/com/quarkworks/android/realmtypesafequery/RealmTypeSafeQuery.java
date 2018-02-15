@@ -1,9 +1,7 @@
 package com.quarkworks.android.realmtypesafequery;
 
-import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Pair;
 
 import com.quarkworks.android.realmtypesafequery.fields.RealmAggregatableField;
 import com.quarkworks.android.realmtypesafequery.fields.RealmDistinctableField;
@@ -17,7 +15,6 @@ import com.quarkworks.android.realmtypesafequery.fields.RealmEmptyableField;
 import com.quarkworks.android.realmtypesafequery.fields.RealmInableField;
 import com.quarkworks.android.realmtypesafequery.fields.RealmSortableField;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import io.realm.Case;
