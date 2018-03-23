@@ -26,5 +26,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
     implementation "com.android.support:appcompat-v7:$support_library_version"
     implementation project(':query')
+    implementation project(':annotations')
     annotationProcessor project(':annotationprocessor')
 }

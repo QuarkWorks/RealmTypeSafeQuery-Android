@@ -56,13 +56,13 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
-//todo add .with(realm)
-            Log.d(TAG, "Count:" + RealmTypeSafeQuery.where(TestRecord.class).count());
 
-            Log.d(TAG, "Equal To 1: " + RealmTypeSafeQuery.where(TestRecord.class).equalTo(TestRecordFields.STRING_FIELD, "1").findAll().toString());
-            Log.d(TAG, "Equal To null: " + RealmTypeSafeQuery.where(TestRecord.class).equalTo(TestRecordFields.STRING_FIELD, null).findAll().toString());
-            Log.d(TAG, "IsNull: " + RealmTypeSafeQuery.where(TestRecord.class).isNull(TestRecordFields.STRING_FIELD).findAll().toString());
-            Log.d(TAG, "IsNotNull: " + RealmTypeSafeQuery.where(TestRecord.class).isNotNull(TestRecordFields.STRING_FIELD).findAll().toString());
+            Log.d(TAG, "Count:" + RealmTypeSafeQuery.with(realm).where(TestRecord.class).count());
+
+            Log.d(TAG, "Equal To 1: " + RealmTypeSafeQuery.with(realm).where(TestRecord.class).equalTo(TestRecordFields.STRING_FIELD, "1").findAll().toString());
+            Log.d(TAG, "Equal To null: " + RealmTypeSafeQuery.with(realm).where(TestRecord.class).equalTo(TestRecordFields.STRING_FIELD, null).findAll().toString());
+            Log.d(TAG, "IsNull: " + RealmTypeSafeQuery.with(realm).where(TestRecord.class).isNull(TestRecordFields.STRING_FIELD).findAll().toString());
+            Log.d(TAG, "IsNotNull: " + RealmTypeSafeQuery.with(realm).where(TestRecord.class).isNotNull(TestRecordFields.STRING_FIELD).findAll().toString());
         }
     }
 }
