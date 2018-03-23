@@ -6,16 +6,16 @@
 Supports Realm query API 110% (there are some bonus features too 😉)
 
 There are two big issues when working with Realm Queries.
-1) If a field name is spelled incorectly it failes at runtime instead of compile time.
-2) If an argument is an incorect type (Date instead of String) then the query fails at runtime instead of compile time.
+1) If a field name is spelled incorrectly it fails at runtime instead of compile time.
+2) If an argument is an incorrect type (Date instead of String) then the query fails at runtime instead of compile time.
 
-If you have typesafe query paramaters that allows you to refactor your models without worry of breaking your queries.
-All the field descriptors are auto generated using annotatio proccess so you can't make a mistake. 
+If you have typesafe query parameters that allows you to refactor your models without worry of breaking your queries.
+All the field descriptors are auto generated using annotation process so you can't make a mistake. 
 If you do, then it is caught at compile time and your app won't compile until you fix it.
 
 ### Here is some java code highlighting what the API looks like
 ```java
-// Bad, field name and type are checked at runtime. This is using Relam the defualt way.
+// Bad, field name and type are checked at runtime. This is using Realm the default way.
 realm.where(Person.class).equalTo("firstName", "Sally").findFirst();
 
 // Better, field name is checked at compile time, but type is still at runtime.
@@ -117,6 +117,6 @@ RealmTypeSafeQuery.with(realm).where(ExampleModel.class).group((query) -> {}).fi
 RealmTypeSafeQuery.with(realm).where(ExampleModel.class).or((query) -> {}).findAll();
   
 // For those pesky CSV fields that have a delimiter
-final String delemiter = ",";
-RealmTypeSafeQuery.with(realm).where(ExampleModel.class).contains(field, value, delemiter).findAll();  
+final String delimiter = ",";
+RealmTypeSafeQuery.with(realm).where(ExampleModel.class).contains(field, value, delimiter).findAll();  
 ```
