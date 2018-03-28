@@ -1,5 +1,6 @@
 package com.quarkworks.android.realmtypesafequery.example
 
+import android.annotation.SuppressLint
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +16,7 @@ import io.realm.Realm
 import io.realm.RealmConfiguration
 
 class MainActivity : AppCompatActivity() {
+    @SuppressLint("UseValueOf")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -22,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         val f1 = TestRecordFieldNames.DATE_FIELD
         val f2 = TestRecordFieldNames.STRING_FIELD
 
-        Realm.init(this.getApplicationContext())
+        Realm.init(this.applicationContext)
 
         val config = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build()
         Realm.setDefaultConfiguration(config)
@@ -60,6 +62,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
 
-        private val TAG = MainActivity::class.java.simpleName
+        private val TAG = "${MainActivity::class.java.simpleName} kotlinOnly"
     }
 }
