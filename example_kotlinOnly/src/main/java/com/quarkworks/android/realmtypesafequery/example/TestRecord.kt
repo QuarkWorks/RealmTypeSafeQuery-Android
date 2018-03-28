@@ -18,7 +18,7 @@ import io.realm.annotations.Required
 @RealmClass
 @GenerateRealmFieldNames
 @GenerateRealmFields
-class TestRecord : RealmModel {
+open class TestRecord : RealmModel {
 
     var booleanField: Boolean? = null
 
