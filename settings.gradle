@@ -1,1 +1,1 @@
-include ':annotations', ':annotationprocessor', ':query', ':tests', ':example_javaOnly'
+include ':annotations', ':annotationprocessor', ':query', ':tests', ':example_javaOnly', ':example_kotlinOnly'
