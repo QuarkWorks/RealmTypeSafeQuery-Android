@@ -60,6 +60,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
 
-        private val TAG = MainActivity::class.java!!.getSimpleName()
+        private val TAG = MainActivity::class.java.simpleName
     }
 }
