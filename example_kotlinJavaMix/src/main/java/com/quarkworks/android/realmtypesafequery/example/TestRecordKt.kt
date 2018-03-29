@@ -18,55 +18,55 @@ import io.realm.annotations.Required
 @RealmClass
 @GenerateRealmFieldNames
 @GenerateRealmFields
-public open class TestRecordKt : RealmModel {
+open class TestRecordKt : RealmModel {
 
-    public var booleanField: Boolean? = null
+    var booleanField: Boolean? = null
 
     internal var boolValue: Boolean = false
 
-    public var byteArrayField: ByteArray? = null
+    var byteArrayField: ByteArray? = null
 
-    public var byteField: Byte? = null
+    var byteField: Byte? = null
 
-    public var byteValue: Byte = 0
+    var byteValue: Byte = 0
 
-    public var dateField: Date? = null
+    var dateField: Date? = null
 
-    public var doubleField: Double? = null
+    var doubleField: Double? = null
 
     internal var doubleValue: Double = 0.toDouble()
 
-    public var floatField: Float? = null
+    var floatField: Float? = null
 
     internal var floatValue: Float = 0.toFloat()
 
-    public var integerField: Integer? = null
+    var integerField: Integer? = null
 
-    public var intValue: Int = 0
+    var intValue: Int = 0
 
-    public var longField: Long? = null
+    var longField: Long? = null
 
-    public var longValue: Long = 0
+    var longValue: Long = 0
 
-    public var shortField: Short? = null
+    var shortField: Short? = null
 
-    public var shortValue: Short = 0
+    var shortValue: Short = 0
 
-    public var stringField: String? = null
+    var stringField: String? = null
 
     @Ignore
-    public var ignoredField: Object? = null
+    var ignoredField: Object? = null
 
     @Index
-    public var indexedField: String? = null
+    var indexedField: String? = null
 
     @PrimaryKey
-    public var primaryKey: String? = null
+    var primaryKey: String? = null
 
     @Required
-    public var requiredField = RealmDefaults.STRING
+    var requiredField = RealmDefaults.STRING
 
-    public var parent: TestRecordKt? = null
+    var parent: TestRecordKt? = null
 
-    public var children: RealmList<TestRecordKt> = RealmList()
+    var children: RealmList<TestRecordKt> = RealmList()
 }
