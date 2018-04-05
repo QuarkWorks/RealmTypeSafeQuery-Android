@@ -47,17 +47,23 @@ allprojects {
 #### App module build file dependencies:
 ```groovy
 apply plugin: 'realm-android' // realm setup at top of file
-
-// requires java 8
-compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
+android { 
+    ...[elided]...
+    // requires java 8
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    ...[elided]...
 }
 
 dependencies {
+    ...[elided]...
     compileOnly "com.github.quarkworks.RealmTypeSafeQuery-Android:annotations:$RTSQ_version" // annotations
     annotationProcessor "com.github.quarkworks.RealmTypeSafeQuery-Android:annotationprocessor:$RTSQ_version" // annotation processor
     implementation "com.github.quarkworks.RealmTypeSafeQuery-Android:query:$RTSQ_version"  // query dsl
+    ...[elided]...
+}
 ```
 
 #### Example Model
