@@ -34,7 +34,7 @@ class MainActivityKotlincallMix : AppCompatActivity() {
                     record.dateField = Date((i * 1000).toLong())
                     record.doubleField = i * 1000.0
                     record.floatField = i * 2000f
-                    record.integerField = i  // Notice the difference
+                    record.integerField = i
                     record.longField = i * 10L
                     record.shortField = i.toShort()
                     record.stringField = if (i % 3 == 0) null else i.toString()

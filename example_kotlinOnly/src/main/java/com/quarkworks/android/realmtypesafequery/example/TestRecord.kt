@@ -40,7 +40,7 @@ open class TestRecord : RealmModel {
 
     internal var floatValue: Float = 0.toFloat()
 
-    var integerField: Integer? = null
+    var integerField: Int? = null
 
     var intValue: Int = 0
 
@@ -55,7 +55,7 @@ open class TestRecord : RealmModel {
     var stringField: String? = null
 
     @Ignore
-    var ignoredField: Object? = null
+    var ignoredField: Any? = null
 
     @Index
     var indexedField: String? = null
