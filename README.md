@@ -190,7 +190,7 @@ open class Pet : RealmObject() {
     Realm.getDefaultInstance().use { realm ->
         realm.executeTransaction { realm ->
 
-            val sallyNotSmiths = RealmTypeSafeQuery.with(realm).where(Person::class.java!!)
+            val sallyNotSmiths = RealmTypeSafeQuery.with(realm).where(Person::class.java)
                     .equalTo(PersonFields.FIRST_NAME, "Sally")
                     .notEqualTo(PersonFields.LAST_NAME, "Smith", Case.INSENSITIVE)
                     .lessThan(PersonFields.BIRTHDAY, Date())
@@ -198,7 +198,7 @@ open class Pet : RealmObject() {
 
             //Link queries also work too
 
-            val peopleWithHeavyPets = RealmTypeSafeQuery.with(realm).where(Person::class.java!!)
+            val peopleWithHeavyPets = RealmTypeSafeQuery.with(realm).where(Person::class.java)
                     .greaterThan(PersonFields.PETS.link(PetFields.WEIGHT), 9000).findAll()
         }
     }
