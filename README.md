@@ -25,7 +25,7 @@ realm.where(Person.class).equalTo(PersonFieldNames.FIRST_NAME, "Sally").findFirs
 RealmTypeSafeQuery.with(realm).where(Person.class).equalTo(PersonFields.FIRST_NAME, "Sally").findFirst();
 ```
 
-## How to include
+## How to include _JavaOnly project_
 
 #### In your top level build file, add the jitpack repository along with realm
 ```groovy
