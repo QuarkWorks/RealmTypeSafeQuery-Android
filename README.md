@@ -85,7 +85,7 @@ class Person extends RealmObject {
 }
 
 @GenerateRealmFields // Generates a file called PetFields.java.
-@GenerateRealmFieldNames // Generates a file called PetFieldNames.java.
+@GenerateRealmFieldName // Generates a file called PetFieldNames.java.
 class Pet extends RealmObject {
     String name;
     Integer weight;
