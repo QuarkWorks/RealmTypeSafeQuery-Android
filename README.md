@@ -79,13 +79,13 @@ class Person extends RealmObject {
     
     // If what pops out of the code generator doesn't compile add these annotations.
     // Realm constantly updates their api and RTSQ might be a little behind.
-    @SkipGenerationOfRealmFieldNames
+    @SkipGenerationOfRealmFieldName
     @SkipGenerationOfRealmField  
     RealmList<String> website;
 }
 
 @GenerateRealmFields // Generates a file called PetFields.java.
-@GenerateRealmFieldName // Generates a file called PetFieldNames.java.
+@GenerateRealmFieldNames // Generates a file called PetFieldNames.java.
 class Pet extends RealmObject {
     String name;
     Integer weight;
