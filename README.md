@@ -109,3 +109,97 @@ RealmResults<Person> sallyNotSmiths = RealmTypeSafeQuery.with(realm).where(Perso
 RealmResults<Person> peopleWithHeavyPets = RealmTypeSafeQuery.with(realm).where(Person.class)
     .greaterThan(PersonFields.PETS.link(PetFields.WEIGHT), 9000).findAll();
 ```
+
+## How to include _KotlinOnly project_
+
+#### In your top level build file, add the jitpack repository along with realm
+```groovy
+buildscript {
+    dependencies {
+            classpath "io.realm:realm-gradle-plugin:4.3.4" // supported version of realm
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        google()
+        maven { url "https://jitpack.io" } // RTSQ is hosted on jitpack
+    }
+}
+```
+
+#### App module build file dependencies:
+```groovy
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'realm-android' // realm setup at top of file but below 'kotlin-kapt' 
+
+android { 
+    ...[elided]...
+    // requires java 8 (android build issue)
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    ...[elided]...
+}
+
+dependencies {
+    ...[elided]...
+    compileOnly "com.github.quarkworks.RealmTypeSafeQuery-Android:annotations:$RTSQ_version" // annotations
+    // use kapt not annotationProcessor
+    kapt "com.github.quarkworks.RealmTypeSafeQuery-Android:annotationprocessor:$RTSQ_version" // annotation processor
+    implementation "com.github.quarkworks.RealmTypeSafeQuery-Android:query:$RTSQ_version"  // query dsl
+    ...[elided]...
+}
+```
+
+#### Example Model
+```kotlin
+@GenerateRealmFields // Generates a file called PersonFields.java. This is a RTSQ annotation.
+@GenerateRealmFieldNames // Generates a file called PersonFieldNames.java This is a RTSQ annotation.
+// Kotlin classes are final by default (notice open)
+open class Person : RealmObject() {
+    var firstName: String? = null
+    var lastName: String? = null
+    var birthday: Date? = null
+
+    var pets: RealmList<Pet>? = null
+
+    // If what pops out of the code generator doesn't compile add these annotations.
+    // Realm constantly updates their api and RTSQ might be a little behind.
+    @SkipGenerationOfRealmFieldName
+    @SkipGenerationOfRealmField
+    var website: RealmList<String>? = null
+}
+
+@GenerateRealmFields // Generates a file called PetFields.java.
+@GenerateRealmFieldNames // Generates a file called PetFieldNames.java.
+open class Pet : RealmObject() {
+    var name: String? = null
+    var weight: Int? = null
+}
+```
+
+#### Example Queries
+
+```kotlin
+    Realm.init(this.applicationContext)
+
+    Realm.getDefaultInstance().use { realm ->
+        realm.executeTransaction { realm ->
+
+            val sallyNotSmiths = RealmTypeSafeQuery.with(realm).where(Person::class.java!!)
+                    .equalTo(PersonFields.FIRST_NAME, "Sally")
+                    .notEqualTo(PersonFields.LAST_NAME, "Smith", Case.INSENSITIVE)
+                    .lessThan(PersonFields.BIRTHDAY, Date())
+                    .findAllSorted(PersonFields.BIRTHDAY, Sort.ASCENDING)
+
+            //Link queries also work too
+
+            val peopleWithHeavyPets = RealmTypeSafeQuery.with(realm).where(Person::class.java!!)
+                    .greaterThan(PersonFields.PETS.link(PetFields.WEIGHT), 9000).findAll()
+        }
+    }
+```
