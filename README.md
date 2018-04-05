@@ -185,21 +185,21 @@ open class Pet : RealmObject() {
 #### Example Queries
 
 ```kotlin
-    Realm.init(this.applicationContext)
+Realm.init(this.applicationContext)
 
-    Realm.getDefaultInstance().use { realm ->
-        realm.executeTransaction { realm ->
+Realm.getDefaultInstance().use { realm ->
+    realm.executeTransaction { realm ->
 
-            val sallyNotSmiths = RealmTypeSafeQuery.with(realm).where(Person::class.java)
-                    .equalTo(PersonFields.FIRST_NAME, "Sally")
-                    .notEqualTo(PersonFields.LAST_NAME, "Smith", Case.INSENSITIVE)
-                    .lessThan(PersonFields.BIRTHDAY, Date())
-                    .findAllSorted(PersonFields.BIRTHDAY, Sort.ASCENDING)
+        val sallyNotSmiths = RealmTypeSafeQuery.with(realm).where(Person::class.java)
+                .equalTo(PersonFields.FIRST_NAME, "Sally")
+                .notEqualTo(PersonFields.LAST_NAME, "Smith", Case.INSENSITIVE)
+                .lessThan(PersonFields.BIRTHDAY, Date())
+                .findAllSorted(PersonFields.BIRTHDAY, Sort.ASCENDING)
 
-            //Link queries also work too
+        //Link queries also work too
 
-            val peopleWithHeavyPets = RealmTypeSafeQuery.with(realm).where(Person::class.java)
-                    .greaterThan(PersonFields.PETS.link(PetFields.WEIGHT), 9000).findAll()
-        }
+        val peopleWithHeavyPets = RealmTypeSafeQuery.with(realm).where(Person::class.java)
+                .greaterThan(PersonFields.PETS.link(PetFields.WEIGHT), 9000).findAll()
     }
+}
 ```
