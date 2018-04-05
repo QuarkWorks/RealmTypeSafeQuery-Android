@@ -31,13 +31,14 @@ RealmTypeSafeQuery.with(realm).where(Person.class).equalTo(PersonFields.FIRST_NA
 ```groovy
 buildscript {
     dependencies {
-            classpath "io.realm:realm-gradle-plugin:4.3.1" // supported version of realm
+            classpath "io.realm:realm-gradle-plugin:4.3.4" // supported version of realm
     }
 }
 
 allprojects {
     repositories {
         jcenter()
+        google()
         maven { url "https://jitpack.io" } // RTSQ is hosted on jitpack
     }
 }
@@ -54,9 +55,9 @@ compileOptions {
 }
 
 dependencies {
-    compileOnly 'com.github.quarkworks.RealmTypeSafeQuery-Android:annotations:{{version_number}}' // annotations
-    annotationProcessor 'com.github.quarkworks.RealmTypeSafeQuery-Android:annotationprocessor:{{version_number}}' // annotation processor
-    implementation 'com.github.quarkworks.RealmTypeSafeQuery-Android:query:{{version_number}}'  // query dsl
+    compileOnly "com.github.quarkworks.RealmTypeSafeQuery-Android:annotations:$RTSQ_version" // annotations
+    annotationProcessor "com.github.quarkworks.RealmTypeSafeQuery-Android:annotationprocessor:$RTSQ_version" // annotation processor
+    implementation "com.github.quarkworks.RealmTypeSafeQuery-Android:query:$RTSQ_version"  // query dsl
 ```
 
 #### Example Model
@@ -101,22 +102,4 @@ RealmResults<Person> sallyNotSmiths = RealmTypeSafeQuery.with(realm).where(Perso
  
 RealmResults<Person> peopleWithHeavyPets = RealmTypeSafeQuery.with(realm).where(Person.class)
     .greaterThan(PersonFields.PETS.link(PetFields.WEIGHT), 9000).findAll();
-```
-
-#### Bonus
- 
-```java
-
-final Realm realm = ...
-
-// For chainable sorting 
-RealmTypeSafeQuery.with(realm).where(ExampleModel.class).sort(field1).sort(field3).sort(field2).findAll();
-
-// For creating query groups with lambdas
-RealmTypeSafeQuery.with(realm).where(ExampleModel.class).group((query) -> {}).findAll();
-RealmTypeSafeQuery.with(realm).where(ExampleModel.class).or((query) -> {}).findAll();
-  
-// For those pesky CSV fields that have a delimiter
-final String delimiter = ",";
-RealmTypeSafeQuery.with(realm).where(ExampleModel.class).contains(field, value, delimiter).findAll();  
 ```
