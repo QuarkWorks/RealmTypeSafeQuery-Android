@@ -1,0 +1,30 @@
+apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
+
+android {
+    compileSdkVersion sdk_version
+    buildToolsVersion build_tools_version
+
+    defaultConfig {
+        applicationId "com.quarkworks.android.realmtypesafequery.example"
+        minSdkVersion 19
+        targetSdkVersion sdk_version
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.android.support:appcompat-v7:$support_library_version"
+    implementation project(':query')
+    implementation project(':annotations')
+    annotationProcessor project(':annotationprocessor')
+}
