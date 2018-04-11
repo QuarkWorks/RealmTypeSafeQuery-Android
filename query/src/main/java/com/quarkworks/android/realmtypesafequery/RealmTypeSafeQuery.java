@@ -440,22 +440,26 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
      */
 
     @NonNull
-    public RealmQuery<Model> sort(@NonNull RealmSortableField<Model> field) {
-        return field.sort(realmQuery);
+    public RealmTypeSafeQuery<Model> sort(@NonNull RealmSortableField<Model> field) {
+        field.sort(realmQuery);
+        return this;
     }
 
     @NonNull
-    public RealmQuery<Model> sort(@NonNull RealmSortableField<Model> field, @NonNull Sort sortOrder) {
-        return field.sort(realmQuery, sortOrder);
+    public RealmTypeSafeQuery<Model> sort(@NonNull RealmSortableField<Model> field, @NonNull Sort sortOrder) {
+        field.sort(realmQuery, sortOrder);
+        return this;
     }
 
     @NonNull
-    public RealmQuery<Model> sort(@NonNull RealmSortableField<Model> field1, @NonNull Sort sortOrder1, @NonNull RealmSortableField<Model> field2, @NonNull Sort sortOrder2) {
-        return field1.sort(realmQuery, sortOrder1, field2, sortOrder2);
+    public RealmTypeSafeQuery<Model> sort(@NonNull RealmSortableField<Model> field1, @NonNull Sort sortOrder1, @NonNull RealmSortableField<Model> field2, @NonNull Sort sortOrder2) {
+        field1.sort(realmQuery, sortOrder1, field2, sortOrder2);
+        return this;
     }
 
     @NonNull
-    public RealmQuery<Model> sort(@NonNull RealmSortableField<Model>[] fields, @NonNull Sort[] sortOrders) {
-        return RealmSortableField.Companion.sort(realmQuery, fields, sortOrders);
+    public RealmTypeSafeQuery<Model> sort(@NonNull RealmSortableField<Model>[] fields, @NonNull Sort[] sortOrders) {
+        RealmSortableField.Companion.sort(realmQuery, fields, sortOrders);
+        return this;
     }
 }
