@@ -2,7 +2,7 @@ package com.quarkworks.android.realmtypesafequery.fields
 
 import io.realm.RealmModel
 import io.realm.RealmQuery
-import io.realm.RealmResults
+import io.realm.Sort
 
 interface RealmField<Model : RealmModel> {
     val name: String
@@ -58,7 +58,17 @@ interface RealmEmptyableField<Model : RealmModel> : RealmField<Model> {
 }
 
 interface RealmIndexedField<Model : RealmModel> : RealmField<Model>
-interface RealmSortableField<Model : RealmModel> : RealmField<Model>
+interface RealmSortableField<Model : RealmModel> : RealmField<Model> {
+    fun sort(query: RealmQuery<Model>) : RealmQuery<Model> = query.sort(name)
+    fun sort(query: RealmQuery<Model>, sortOrder: Sort) : RealmQuery<Model> = query.sort(name, sortOrder)
+    fun sort(query: RealmQuery<Model>, sortOrder: Sort, otherField: RealmSortableField<Model>, otherSortOrder: Sort) : RealmQuery<Model> =
+            query.sort(name, sortOrder, otherField.name, otherSortOrder)
+    companion object {
+        fun <Model : RealmModel> sort(query: RealmQuery<Model>, fields: Array<RealmSortableField<Model>>, sortOrders: Array<Sort>) : RealmQuery<Model> =
+                query.sort(fields.map { it.name }.toTypedArray(), sortOrders)
+    }
+
+}
 
 interface RealmInableField<Model : RealmModel, Value> : RealmField<Model> {
     fun `in`(query: RealmQuery<Model>, values: Array<Value>)
@@ -66,9 +76,8 @@ interface RealmInableField<Model : RealmModel, Value> : RealmField<Model> {
 }
 
 interface RealmDistinctableField<Model : RealmModel> : RealmField<Model> {
-    fun distinct(query: RealmQuery<Model>) : RealmResults<Model> = query.distinct(name)
-    fun distinctAsync(query: RealmQuery<Model>) : RealmResults<Model> = query.distinctAsync(name)
-    fun distinct(query: RealmQuery<Model>, vararg otherFields: RealmDistinctableField<Model>) : RealmResults<Model> =
+    fun distinct(query: RealmQuery<Model>) : RealmQuery<Model> = query.distinct(name)
+    fun distinct(query: RealmQuery<Model>, vararg otherFields: RealmDistinctableField<Model>) : RealmQuery<Model> =
             query.distinct(name, *otherFields.map { it.name }.toTypedArray())
 }
 

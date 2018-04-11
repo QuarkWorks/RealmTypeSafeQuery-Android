@@ -350,21 +350,13 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
      */
 
     @NonNull
-    @Deprecated
-    public RealmResults<Model> distinct(@NonNull RealmDistinctableField<Model> field) {
+    public RealmQuery<Model> distinct(@NonNull RealmDistinctableField<Model> field) {
         return field.distinct(realmQuery);
     }
 
     @NonNull
-    @Deprecated
-    public RealmResults<Model> distinctAsync(@NonNull RealmDistinctableField<Model> field) {
-        return field.distinctAsync(realmQuery);
-    }
-
     @SafeVarargs
-    @NonNull
-    @Deprecated
-    public final RealmResults<Model> distinct(@NonNull RealmDistinctableField<Model> firstField, @NonNull RealmDistinctableField<Model>... remainingFields) {
+    public final RealmQuery<Model> distinct(@NonNull RealmDistinctableField<Model> firstField, @NonNull RealmDistinctableField<Model>... remainingFields) {
         return firstField.distinct(realmQuery, remainingFields);
     }
 
@@ -418,35 +410,6 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
         return realmQuery.findAll();
     }
 
-    /**
-     *  @deprecated Since Realm 4.3.0, now use {@link RealmTypeSafeQuery#sort(RealmSortableField, Sort)} then {@link RealmSortedQuery#findAll()}
-     */
-
-    @NonNull
-    @Deprecated
-    public RealmResults<Model> findAllSorted(@NonNull RealmSortableField<Model> field, @NonNull Sort sortOrder) {
-        return sort(field, sortOrder).findAll();
-    }
-
-    /**
-     *  @deprecated Since Realm 4.3.0, now use {@link RealmTypeSafeQuery#sort(RealmSortableField, Sort)} then {@link RealmSortedQuery#findAll()}
-     */
-
-    @NonNull
-    @Deprecated
-    public RealmResults<Model> findAllSorted(@NonNull RealmSortableField<Model> field1, Sort sortOrder1, @NonNull RealmSortableField<Model> field2, @NonNull Sort sortOrder2) {
-        return sort(field1, sortOrder1, field2, sortOrder2).findAll();
-    }
-
-    /**
-     *  @deprecated Since Realm 4.3.0, now use {@link RealmTypeSafeQuery#sort(RealmSortableField, Sort)} then {@link RealmSortedQuery#findAll()}
-     */
-
-    @NonNull
-    @Deprecated
-    public RealmResults<Model> findAllSorted(@NonNull RealmSortableField<Model>[] fields, @NonNull Sort[] sortOrders) {
-        return sort(fields, sortOrders).findAll();
-    }
 
      /*
         Find First
@@ -457,36 +420,6 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
         return realmQuery.findFirst();
     }
 
-    /**
-     *  @deprecated Since Realm 4.3.0, now use {@link RealmTypeSafeQuery#sort(RealmSortableField, Sort)} then {@link RealmSortedQuery#findFirst()}
-     */
-
-    @Nullable
-    @Deprecated
-    public Model findFirstSorted(@NonNull RealmSortableField<Model> field, Sort sortOrder) {
-        return sort(field, sortOrder).findFirst();
-    }
-
-    /**
-     *  @deprecated Since Realm 4.3.0, now use {@link RealmTypeSafeQuery#sort(RealmSortableField, Sort)} then {@link RealmSortedQuery#findFirst()}
-     */
-
-    @Nullable
-    @Deprecated
-    public Model findFirstSorted(@NonNull RealmSortableField<Model> field1, Sort sortOrder1, @NonNull RealmSortableField<Model> field2, Sort sortOrder2) {
-        return sort(field1, sortOrder1, field2, sortOrder2).findFirst();
-    }
-
-    /**
-     *  @deprecated Since Realm 4.3.0, now use {@link RealmTypeSafeQuery#sort(RealmSortableField, Sort)} then {@link RealmSortedQuery#findFirst()}
-     */
-
-    @Nullable
-    @Deprecated
-    public Model findFirstSorted(@NonNull RealmSortableField<Model>[] fields, @NonNull Sort[] sortOrders) {
-        return sort(fields, sortOrders).findFirst();
-    }
-
     /*
         Async
      */
@@ -494,36 +427,6 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
     @NonNull
     public RealmResults<Model> findAllAsync() {
         return realmQuery.findAllAsync();
-    }
-
-    /**
-     *  @deprecated Since Realm 4.3.0, now use {@link RealmTypeSafeQuery#sort(RealmSortableField, Sort)} then {@link RealmSortedQuery#findAllAsync()}
-     */
-
-    @NonNull
-    @Deprecated
-    public RealmResults<Model> findAllSortedAsync(@NonNull RealmSortableField<Model> field, @NonNull Sort sortOrder) {
-        return sort(field, sortOrder).findAllAsync();
-    }
-
-    /**
-     *  @deprecated Since Realm 4.3.0, now use {@link RealmTypeSafeQuery#sort(RealmSortableField, Sort)} then {@link RealmSortedQuery#findAllAsync()}
-     */
-
-    @NonNull
-    @Deprecated
-    public RealmResults<Model> findAllSortedAsync(@NonNull RealmSortableField<Model> field1, @NonNull Sort sortOrder1, @NonNull RealmSortableField<Model> field2, Sort sortOrder2) {
-        return sort(field1, sortOrder1, field2, sortOrder2).findAllAsync();
-    }
-
-    /**
-     *  @deprecated Since Realm 4.3.0, now use {@link RealmTypeSafeQuery#sort(RealmSortableField, Sort)} then {@link RealmSortedQuery#findAllAsync()}
-     */
-
-    @NonNull
-    @Deprecated
-    public RealmResults<Model> findAllSortedAsync(@NonNull RealmSortableField<Model>[] fields, @NonNull Sort[] sortOrders) {
-        return sort(fields, sortOrders).findAllAsync();
     }
 
     @NonNull
@@ -537,17 +440,22 @@ public class RealmTypeSafeQuery<Model extends RealmModel> {
      */
 
     @NonNull
-    public RealmSortedQuery<Model> sort(@NonNull RealmSortableField<Model> field, @NonNull Sort sortOrder) {
-        return new RealmSortedQuery<>(realmQuery).sort(field, sortOrder);
+    public RealmQuery<Model> sort(@NonNull RealmSortableField<Model> field) {
+        return field.sort(realmQuery);
     }
 
     @NonNull
-    public RealmSortedQuery<Model> sort(@NonNull RealmSortableField<Model> field1, @NonNull Sort sortOrder1, @NonNull RealmSortableField<Model> field2, @NonNull Sort sortOrder2) {
-        return new RealmSortedQuery<>(realmQuery).sort(field1, sortOrder1).sort(field2, sortOrder2);
+    public RealmQuery<Model> sort(@NonNull RealmSortableField<Model> field, @NonNull Sort sortOrder) {
+        return field.sort(realmQuery, sortOrder);
     }
 
     @NonNull
-    public RealmSortedQuery<Model> sort(@NonNull RealmSortableField<Model>[] fields, @NonNull Sort[] sortOrders) {
-        return new RealmSortedQuery<>(realmQuery).sort(fields, sortOrders);
+    public RealmQuery<Model> sort(@NonNull RealmSortableField<Model> field1, @NonNull Sort sortOrder1, @NonNull RealmSortableField<Model> field2, @NonNull Sort sortOrder2) {
+        return field1.sort(realmQuery, sortOrder1, field2, sortOrder2);
+    }
+
+    @NonNull
+    public RealmQuery<Model> sort(@NonNull RealmSortableField<Model>[] fields, @NonNull Sort[] sortOrders) {
+        return RealmSortableField.Companion.sort(realmQuery, fields, sortOrders);
     }
 }
