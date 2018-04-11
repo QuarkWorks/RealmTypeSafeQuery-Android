@@ -31,7 +31,7 @@ RealmTypeSafeQuery.with(realm).where(Person.class).equalTo(PersonFields.FIRST_NA
 ```groovy
 buildscript {
     dependencies {
-            classpath "io.realm:realm-gradle-plugin:4.3.4" // supported version of realm
+            classpath "io.realm:realm-gradle-plugin:5.0.1" // supported version of realm
     }
 }
 
@@ -116,7 +116,7 @@ RealmResults<Person> peopleWithHeavyPets = RealmTypeSafeQuery.with(realm).where(
 ```groovy
 buildscript {
     dependencies {
-            classpath "io.realm:realm-gradle-plugin:4.3.4" // supported version of realm
+            classpath "io.realm:realm-gradle-plugin:5.0.1" // supported version of realm
     }
 }
 
