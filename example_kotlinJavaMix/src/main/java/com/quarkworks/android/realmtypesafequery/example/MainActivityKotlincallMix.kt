@@ -22,7 +22,7 @@ class MainActivityKotlincallMix : AppCompatActivity() {
 
         Realm.init(this.applicationContext)
 
-        Realm.getDefaultInstance().use({ realm ->
+        Realm.getDefaultInstance().use { realm ->
 
             realm.executeTransaction { realm ->
                 realm.deleteAll()
@@ -50,7 +50,7 @@ class MainActivityKotlincallMix : AppCompatActivity() {
             Log.d(TAG, "TestRecordJava Equal To null: " + RealmTypeSafeQuery.with(realm).where(TestRecordJava::class.java).equalTo(TestRecordJavaFields.STRING_FIELD, null).findAll().toString())
             Log.d(TAG, "TestRecordJava IsNull: " + RealmTypeSafeQuery.with(realm).where(TestRecordJava::class.java).isNull(TestRecordJavaFields.STRING_FIELD).findAll().toString())
             Log.d(TAG, "TestRecordJava IsNotNull: " + RealmTypeSafeQuery.with(realm).where(TestRecordJava::class.java).isNotNull(TestRecordJavaFields.STRING_FIELD).findAll().toString())
-        })
+        }
     }
 
     companion object {

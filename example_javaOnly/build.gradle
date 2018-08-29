@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'realm-android'
 
 android {
@@ -26,5 +28,5 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$support_library_version"
     implementation project(':query')
     implementation project(':annotations')
-    annotationProcessor project(':annotationprocessor')
+    kapt project(':annotationprocessor')
 }

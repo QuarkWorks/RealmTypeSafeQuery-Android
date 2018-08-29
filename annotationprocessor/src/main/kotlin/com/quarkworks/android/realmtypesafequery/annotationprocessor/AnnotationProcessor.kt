@@ -5,11 +5,13 @@ import com.quarkworks.android.realmtypesafequery.annotations.SkipGenerationOfRea
 import com.quarkworks.android.realmtypesafequery.annotations.SkipGenerationOfRealmField
 import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFieldNames
 import com.quarkworks.android.realmtypesafequery.annotations.GenerateRealmFields
-import com.squareup.javapoet.FieldSpec
-import com.squareup.javapoet.JavaFile
-import com.squareup.javapoet.ParameterizedTypeName
-import com.squareup.javapoet.TypeName
-import com.squareup.javapoet.TypeSpec
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.ParameterizedTypeName
+import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.asTypeName
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 
 import java.io.IOException
 import java.util.LinkedList
@@ -33,18 +35,25 @@ import javax.tools.Diagnostic
 import io.realm.annotations.Ignore
 import io.realm.annotations.Index
 import io.realm.annotations.PrimaryKey
+import javax.annotation.processing.SupportedOptions
+import javax.tools.StandardLocation
 
 
 @AutoService(Processor::class)
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
+@SupportedOptions(AnnotationProcessor.KAPT_KOTLIN_GENERATED_OPTION_NAME)
 class AnnotationProcessor : AbstractProcessor() {
+
+    companion object {
+        const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
+    }
 
     private fun String.toConstId() : String = this.replace("([a-z])([A-Z])".toRegex(), "$1_$2").toUpperCase()
 
     private fun Element.isAnnotatedWith(annotation: Class<out Annotation>) : Boolean =
             this.getAnnotation(annotation) != null
 
-    private val fieldSpecsModifiers = arrayOf(Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+    private val fieldSpecsModifiers = arrayOf(KModifier.PUBLIC)
     private val packageName: String = "com.quarkworks.android.realmtypesafequery" + ".generated"
     private val supportedAnnotationTypes: Set<String> = setOf(
             GenerateRealmFieldNames::class.java.canonicalName,
@@ -80,7 +89,7 @@ class AnnotationProcessor : AbstractProcessor() {
             if (element !is TypeElement) continue
 
             val variableElements = ElementFilter.fieldsIn(element.enclosedElements)
-            val fieldSpecs = LinkedList<FieldSpec>()
+            val fieldSpecs = LinkedList<PropertySpec>()
 
             for (realmField in variableElements) {
                 // ignore static and @Ignore fields
@@ -90,29 +99,35 @@ class AnnotationProcessor : AbstractProcessor() {
 
                 val name = realmField.simpleName.toString().toConstId()
 
-                val fieldSpec = FieldSpec.builder(String::class.java, name, *fieldSpecsModifiers)
-                        .initializer("\$S", realmField.simpleName)
+                val propertySpec = PropertySpec.builder(name, String::class, KModifier.CONST, *fieldSpecsModifiers)
+                        .initializer("%S", realmField.simpleName)
                         .build()
 
-                fieldSpecs.add(fieldSpec)
+                fieldSpecs.add(propertySpec)
             }
 
             val className = element.simpleName.toString() + "FieldNames"
 
-            val typeSpec = TypeSpec.classBuilder(className).addFields(fieldSpecs)
-                    .addModifiers(Modifier.PUBLIC).build()
+            val typeSpec = TypeSpec.objectBuilder(className).addProperties(fieldSpecs)
+                    .build()
 
-            val javaFile = JavaFile.builder(packageName, typeSpec).build()
+            val kotlinFile = FileSpec.builder(packageName, className)
+                .addType(typeSpec)
+                .build()
 
             try {
-                javaFile.writeTo(this.processingEnv.filer)
+                val kotlinFileObject = processingEnv.filer.createResource(StandardLocation.SOURCE_OUTPUT,
+                    packageName, "$className.kt")
+                val writer = kotlinFileObject.openWriter()
+                kotlinFile.writeTo(writer)
+                writer.close()
             } catch (e: IOException) {
                 this.reportError(element, e.toString())
             }
         }
     }
 
-    private fun makeFieldSpec(realmClassElement: Element, realmFieldElement: Element): FieldSpec {
+    private fun makePropertySpec(realmClassElement: Element, realmFieldElement: Element): PropertySpec {
         
         if (typeUtils.isSubtype(realmFieldElement.asType(), realmModel)) {
             return makeToOne(realmClassElement, realmFieldElement)
@@ -125,45 +140,48 @@ class AnnotationProcessor : AbstractProcessor() {
 
         val isPrimaryKey = realmFieldElement.isAnnotatedWith(PrimaryKey::class.java)
         val isIndex = realmFieldElement.isAnnotatedWith(Index::class.java)
-        val typeName = TypeName.get(realmClassElement.asType())
+        val typeName = realmClassElement.asType().asTypeName()
         val parameterizedTypeName: ParameterizedTypeName
 
         parameterizedTypeName = if (!isPrimaryKey && !isIndex) {
-            ParameterizedTypeName.get(Maps.BASE_MAP[rfeClass], typeName)
+            Maps.BASE_MAP[rfeClass]!!.parameterizedBy(typeName)
         } else {
-            ParameterizedTypeName.get(Maps.INDEX_MAP[Maps.BASE_MAP[rfeClass]], typeName)
+            Maps.INDEX_MAP[Maps.BASE_MAP[rfeClass]]!!.parameterizedBy(typeName)
         }
 
-        return FieldSpec.builder(parameterizedTypeName, fieldName.toConstId(), *fieldSpecsModifiers)
-                .initializer("new \$T(\$T.class, \$S)", parameterizedTypeName, typeName, fieldName)
-                .build()
+        return PropertySpec.builder(fieldName.toConstId(), parameterizedTypeName, *fieldSpecsModifiers)
+            .initializer("%T(%T::class.java, %S)", parameterizedTypeName, typeName, fieldName)
+            .addAnnotation(JvmField::class)
+            .build()
     }
 
-    private fun makeToMany(realmClassElement: Element, realmFieldElement: Element): FieldSpec {
+    private fun makeToMany(realmClassElement: Element, realmFieldElement: Element): PropertySpec {
         val typeMirror = realmClassElement.asType()
         val fieldName = realmFieldElement.simpleName.toString()
 
-        val parameterizedTypeName = ParameterizedTypeName.get(Maps.REALM_TO_MANY_RELATIONSHIP,
-                TypeName.get(typeMirror),
-                TypeName.get((realmFieldElement.asType() as DeclaredType).typeArguments[0]))
+        val parameterizedTypeName = Maps.REALM_TO_MANY_RELATIONSHIP.parameterizedBy(
+                typeMirror.asTypeName(),
+                (realmFieldElement.asType() as DeclaredType).typeArguments[0].asTypeName())
 
-        return FieldSpec.builder(parameterizedTypeName, fieldName.toConstId(), *fieldSpecsModifiers)
-                .initializer("new \$T(\$T.class, \$S)", parameterizedTypeName, TypeName.get(typeMirror), fieldName)
-                .build()
+        return PropertySpec.builder(fieldName.toConstId(), parameterizedTypeName, *fieldSpecsModifiers)
+            .initializer("%T(%T::class.java, %S)", parameterizedTypeName, typeMirror.asTypeName(), fieldName)
+            .addAnnotation(JvmField::class)
+            .build()
 
     }
 
-    private fun makeToOne(realmClassElement: Element, realmFieldElement: Element): FieldSpec {
+    private fun makeToOne(realmClassElement: Element, realmFieldElement: Element): PropertySpec {
         val typeMirror = realmClassElement.asType()
         val fieldName = realmFieldElement.simpleName.toString()
 
-        val parameterizedTypeName = ParameterizedTypeName.get(Maps.REALM_TO_ONE_RELATIONSHIP,
-                TypeName.get(typeMirror),
-                TypeName.get(realmFieldElement.asType()))
+        val parameterizedTypeName = Maps.REALM_TO_ONE_RELATIONSHIP.parameterizedBy(
+                typeMirror.asTypeName(),
+                realmFieldElement.asType().asTypeName())
 
-        return FieldSpec.builder(parameterizedTypeName, fieldName.toConstId(), *fieldSpecsModifiers)
-                .initializer("new \$T(\$T.class, \$S)", parameterizedTypeName, TypeName.get(typeMirror), fieldName)
-                .build()
+        return PropertySpec.builder(fieldName.toConstId(), parameterizedTypeName, *fieldSpecsModifiers)
+            .initializer("%T(%T::class.java, %S)", parameterizedTypeName, typeMirror.asTypeName(), fieldName)
+            .addAnnotation(JvmField::class)
+            .build()
 
     }
 
@@ -172,27 +190,32 @@ class AnnotationProcessor : AbstractProcessor() {
             if (element !is TypeElement) continue
 
             val variableElements = ElementFilter.fieldsIn(element.enclosedElements)
-            val fieldSpecs = LinkedList<FieldSpec>()
+            val propertySpecs = LinkedList<PropertySpec>()
 
             for (realmField in variableElements) {
                 if (realmField.modifiers.contains(Modifier.STATIC)) continue
                 if (realmField.isAnnotatedWith(Ignore::class.java)) continue
                 if (realmField.isAnnotatedWith(SkipGenerationOfRealmField::class.java)) continue
 
-                fieldSpecs.add(makeFieldSpec(element, realmField))
+                propertySpecs.add(makePropertySpec(element, realmField))
             }
 
             val className = element.simpleName.toString() + "Fields"
 
-            val typeSpec = TypeSpec.classBuilder(className)
-                    .addFields(fieldSpecs)
-                    .addModifiers(Modifier.PUBLIC)
+            val typeSpec = TypeSpec.objectBuilder(className)
+                    .addProperties(propertySpecs)
+                    .addModifiers(KModifier.PUBLIC)
                     .build()
 
-            val javaFile = JavaFile.builder(packageName, typeSpec).build()
+            val kotlinFile = FileSpec.builder(packageName, className)
+                .addType(typeSpec)
+                .build()
 
             try {
-                javaFile.writeTo(this.processingEnv.filer)
+                val kotlinFileObject = processingEnv.filer.createResource(StandardLocation.SOURCE_OUTPUT, packageName, "$className.kt")
+                val writer = kotlinFileObject.openWriter()
+                kotlinFile.writeTo(writer)
+                writer.close()
             } catch (e: IOException) {
                 this.reportError(element, e.toString())
             }
