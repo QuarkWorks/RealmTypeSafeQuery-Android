@@ -53,7 +53,7 @@ class AnnotationProcessor : AbstractProcessor() {
     private fun Element.isAnnotatedWith(annotation: Class<out Annotation>) : Boolean =
             this.getAnnotation(annotation) != null
 
-    private val fieldSpecsModifiers = arrayOf(KModifier.PUBLIC)
+    private val propertySpecsModifiers = arrayOf(KModifier.PUBLIC)
     private val packageName: String = "com.quarkworks.android.realmtypesafequery" + ".generated"
     private val supportedAnnotationTypes: Set<String> = setOf(
             GenerateRealmFieldNames::class.java.canonicalName,
@@ -89,7 +89,7 @@ class AnnotationProcessor : AbstractProcessor() {
             if (element !is TypeElement) continue
 
             val variableElements = ElementFilter.fieldsIn(element.enclosedElements)
-            val fieldSpecs = LinkedList<PropertySpec>()
+            val propertySpecs = LinkedList<PropertySpec>()
 
             for (realmField in variableElements) {
                 // ignore static and @Ignore fields
@@ -99,16 +99,16 @@ class AnnotationProcessor : AbstractProcessor() {
 
                 val name = realmField.simpleName.toString().toConstId()
 
-                val propertySpec = PropertySpec.builder(name, String::class, KModifier.CONST, *fieldSpecsModifiers)
+                val propertySpec = PropertySpec.builder(name, String::class, KModifier.CONST, *propertySpecsModifiers)
                         .initializer("%S", realmField.simpleName)
                         .build()
 
-                fieldSpecs.add(propertySpec)
+                propertySpecs.add(propertySpec)
             }
 
             val className = element.simpleName.toString() + "FieldNames"
 
-            val typeSpec = TypeSpec.objectBuilder(className).addProperties(fieldSpecs)
+            val typeSpec = TypeSpec.objectBuilder(className).addProperties(propertySpecs)
                     .build()
 
             val kotlinFile = FileSpec.builder(packageName, className)
@@ -149,7 +149,7 @@ class AnnotationProcessor : AbstractProcessor() {
             Maps.INDEX_MAP[Maps.BASE_MAP[rfeClass]]!!.parameterizedBy(typeName)
         }
 
-        return PropertySpec.builder(fieldName.toConstId(), parameterizedTypeName, *fieldSpecsModifiers)
+        return PropertySpec.builder(fieldName.toConstId(), parameterizedTypeName, *propertySpecsModifiers)
             .initializer("%T(%T::class.java, %S)", parameterizedTypeName, typeName, fieldName)
             .addAnnotation(JvmField::class)
             .build()
@@ -163,7 +163,7 @@ class AnnotationProcessor : AbstractProcessor() {
                 typeMirror.asTypeName(),
                 (realmFieldElement.asType() as DeclaredType).typeArguments[0].asTypeName())
 
-        return PropertySpec.builder(fieldName.toConstId(), parameterizedTypeName, *fieldSpecsModifiers)
+        return PropertySpec.builder(fieldName.toConstId(), parameterizedTypeName, *propertySpecsModifiers)
             .initializer("%T(%T::class.java, %S)", parameterizedTypeName, typeMirror.asTypeName(), fieldName)
             .addAnnotation(JvmField::class)
             .build()
@@ -178,7 +178,7 @@ class AnnotationProcessor : AbstractProcessor() {
                 typeMirror.asTypeName(),
                 realmFieldElement.asType().asTypeName())
 
-        return PropertySpec.builder(fieldName.toConstId(), parameterizedTypeName, *fieldSpecsModifiers)
+        return PropertySpec.builder(fieldName.toConstId(), parameterizedTypeName, *propertySpecsModifiers)
             .initializer("%T(%T::class.java, %S)", parameterizedTypeName, typeMirror.asTypeName(), fieldName)
             .addAnnotation(JvmField::class)
             .build()
