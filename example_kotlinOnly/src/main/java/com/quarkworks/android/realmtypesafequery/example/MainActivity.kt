@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         val config = RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build()
         Realm.setDefaultConfiguration(config)
 
-        Realm.getDefaultInstance().use({ realm ->
+        Realm.getDefaultInstance().use { realm ->
 
             realm.executeTransaction { realm ->
                 realm.deleteAll()
@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "Equal To null: " + RealmTypeSafeQuery.with(realm).where(TestRecord::class.java).equalTo(TestRecordFields.STRING_FIELD, null).findAll().toString())
             Log.d(TAG, "IsNull: " + RealmTypeSafeQuery.with(realm).where(TestRecord::class.java).isNull(TestRecordFields.STRING_FIELD).findAll().toString())
             Log.d(TAG, "IsNotNull: " + RealmTypeSafeQuery.with(realm).where(TestRecord::class.java).isNotNull(TestRecordFields.STRING_FIELD).findAll().toString())
-        })
+        }
     }
 
     companion object {

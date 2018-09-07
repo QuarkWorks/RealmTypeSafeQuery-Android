@@ -7,9 +7,6 @@ buildscript {
     repositories{
         jcenter()
     }
-    dependencies {
-        classpath 'com.squareup:javapoet:1.9.0'
-    }
 }
 
 group='com.github.quarkworks' // jitpack.io
@@ -19,15 +16,15 @@ def source_GIT_COMMIT = new File(buildDir, 'generated/source/GIT_COMMIT/main/jav
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     implementation project(':annotations')
     implementation "io.realm:realm-annotations:$realm_version"
 
-    kapt "com.google.auto.service:auto-service:1.0-rc2" // don't update yet, won't auto generate code
-    compileOnly "com.google.auto.service:auto-service:1.0-rc2" // don't update yet, won't auto generate code
+    kapt "com.google.auto.service:auto-service:1.0-rc4"
+    compileOnly "com.google.auto.service:auto-service:1.0-rc4"
 
-    implementation 'com.squareup:javapoet:1.9.0'
+    implementation 'com.squareup:kotlinpoet:1.0.0-RC1'
 }
 
 repositories {
