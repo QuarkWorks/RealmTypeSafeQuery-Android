@@ -179,12 +179,14 @@ fun <T : RealmModel, V> RealmQuery<T>.max(field: RealmMinMaxField<T, V>) : V? = 
     Sorting
 */
 
-fun <T : RealmModel> RealmQuery<T>.sort(field: RealmSortableField<T>, sortOrder: Sort = Sort.ASCENDING) : RealmQuery<T> =
-        field.sort(this, sortOrder)
+fun <T : RealmModel> RealmQuery<T>.sort(field: RealmSortableField<T>, sortOrder: Sort = Sort.ASCENDING) : RealmSortedQuery<T> =
+        RealmSortedQuery(this).sort(field, sortOrder)
 
-fun <T : RealmModel> RealmQuery<T>.sort(field1: RealmSortableField<T>, sortOrder1: Sort, field2: RealmSortableField<T>, sortOrder2: Sort) : RealmQuery<T> =
-        field1.sort(this, sortOrder1, field2, sortOrder2)
+fun <T : RealmModel> RealmQuery<T>.sort(field1: RealmSortableField<T>, sortOrder1: Sort, field2: RealmSortableField<T>, sortOrder2: Sort) : RealmSortedQuery<T> =
+        RealmSortedQuery(this)
+            .sort(field1, sortOrder1)
+            .sort(field2, sortOrder2)
 
-fun <T : RealmModel> RealmQuery<T>.sort(fields: Array<RealmSortableField<T>>, sortOrders: Array<Sort>) : RealmQuery<T> =
-        RealmSortableField.sort(this, fields, sortOrders);
+fun <T : RealmModel> RealmQuery<T>.sort(fields: Array<RealmSortableField<T>>, sortOrders: Array<Sort>) : RealmSortedQuery<T> =
+        RealmSortedQuery(this).sort(fields, sortOrders)
 

@@ -10,6 +10,7 @@ import com.quarkworks.android.realmtypesafequery.fields.RealmInableField
 import com.quarkworks.android.realmtypesafequery.fields.RealmMinMaxField
 import com.quarkworks.android.realmtypesafequery.fields.RealmNullableField
 import com.quarkworks.android.realmtypesafequery.fields.RealmSortableField
+import com.quarkworks.android.realmtypesafequery.fields.RealmSortedQuery
 import com.quarkworks.android.realmtypesafequery.fields.RealmStringField
 import io.realm.Case
 import io.realm.Realm
@@ -360,23 +361,14 @@ class RealmTypeSafeQuery<Model : RealmModel>(private val realmQuery: RealmQuery<
      * Sort
      */
 
-    fun sort(field: RealmSortableField<Model>): RealmTypeSafeQuery<Model> {
-        field.sort(realmQuery)
-        return this
-    }
+    fun sort(field: RealmSortableField<Model>) = RealmSortedQuery(realmQuery).sort(field, Sort.ASCENDING)
 
-    fun sort(field: RealmSortableField<Model>, sortOrder: Sort): RealmTypeSafeQuery<Model> {
-        field.sort(realmQuery, sortOrder)
-        return this
-    }
+    fun sort(field: RealmSortableField<Model>, sortOrder: Sort) = RealmSortedQuery(realmQuery).sort(field, sortOrder)
 
-    fun sort(field1: RealmSortableField<Model>, sortOrder1: Sort, field2: RealmSortableField<Model>, sortOrder2: Sort): RealmTypeSafeQuery<Model> {
-        field1.sort(realmQuery, sortOrder1, field2, sortOrder2)
-        return this
-    }
+    fun sort(field1: RealmSortableField<Model>, sortOrder1: Sort, field2: RealmSortableField<Model>, sortOrder2: Sort)
+        = RealmSortedQuery(realmQuery)
+        .sort(field1, sortOrder1)
+        .sort(field2, sortOrder2)
 
-    fun sort(fields: Array<RealmSortableField<Model>>, sortOrders: Array<Sort>): RealmTypeSafeQuery<Model> {
-        RealmSortableField.sort(realmQuery, fields, sortOrders)
-        return this
-    }
+    fun sort(fields: Array<RealmSortableField<Model>>, sortOrders: Array<Sort>) = RealmSortedQuery(realmQuery).sort(fields, sortOrders)
 }
